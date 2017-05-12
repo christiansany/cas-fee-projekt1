@@ -1,0 +1,25 @@
+{
+  "name": "notesmanager",
+  "version": "0.0.0",
+  "description": "App for managing your notes",
+  "main": "index.html",
+  "scripts": {
+    "dev": "",
+    "build": "",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christiansany/cas-fee-projekt1.git"
+  },
+  "keywords": [
+    "notes",
+    "note"
+  ],
+  "author": "Christian Sany <christian.sany@bluewin.ch>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/christiansany/cas-fee-projekt1/issues"
+  },
+  "homepage": "https://cas-fee-projekt1.github.io/"
+}
