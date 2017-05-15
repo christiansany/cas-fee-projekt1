@@ -1,0 +1,219 @@
+/* ==|====================
+   Tools / Grid
+   ======================= */
+
+// TODO: Refactor to flexbox grid
+// TODO: Multiple breakpoints not needed, app will be disabled on small viewports
+
+// Grid
+
+$container-padding-small:           15px; // this needs to be a pixel value for easier calculations if needed
+$container-padding-medium:          40px; // this needs to be a pixel value for easier calculations if needed
+$container-padding-large:           50px; // this needs to be a pixel value for easier calculations if needed
+
+$max-container-width:               1100px; // this needs to be a pixel value for easier calculations if needed
+
+// Gutters
+
+$gutter-small:                      20px; // this needs to be a pixel value
+$gutter-medium:                     20px; // this needs to be a pixel value
+$gutter-large:                      20px; // this needs to be a pixel value
+
+// Extra small screen / phone
+$screen-xs:                         0;
+
+// Small screen / tablet
+$screen-sm:                         768px;
+
+// Medium screen / desktop
+$screen-md:                         992px;
+
+// Large screen / wide desktop
+$screen-lg:                         1200px;
+
+$xs:                                "only screen";
+$sm:                                "only screen and (min-width: #{em($screen-sm)})";
+$md:                                "only screen and (min-width: #{em($screen-md)})";
+$lg:                                "only screen and (min-width: #{em($screen-lg)})";
+
+$xs-up:                             $xs;
+$xs-only:                           "#{$xs} and (max-width: #{em($screen-sm - 1px)})";
+
+$sm-up:                             $sm;
+$sm-only:                           "#{$sm} and (max-width: #{em($screen-md - 1px)})";
+
+$md-up:                             $md;
+$md-only:                           "#{$md} and (max-width: #{em($screen-lg - 1px)})";
+
+$lg-up:                             $lg;
+$lg-only:                           $lg;
+
+// Box sizing
+* {
+    &,
+    &::before,
+    &::after {
+        box-sizing: inherit;
+    }
+}
+
+.grid__container,
+%grid__container {
+    @extend %clearfix;
+    width: 100%;
+    margin: 0 auto;
+    max-width: rem($max-container-width);
+    padding-left: rem($container-padding-small);
+    padding-right: rem($container-padding-small);
+
+    @media #{$sm-up} {
+        padding-left: rem($container-padding-medium);
+        padding-right: rem($container-padding-medium);
+    }
+
+    @media #{$md-up} {
+        padding-left: rem($container-padding-large);
+        padding-right: rem($container-padding-large);
+    }
+}
+
+.grid__row,
+%grid__row {
+    @extend %clearfix;
+    margin-left: rem($gutter-small *- 1 / 2);
+    margin-right: rem($gutter-small *- 1 / 2);
+
+    @media #{$sm-up} {
+        margin-left: rem($gutter-medium *- 1 / 2);
+        margin-right: rem($gutter-medium *- 1 / 2);
+    }
+
+    @media #{$xs-only} {
+        @for $i from 1 through 12 {
+            &--clear-xs-#{$i} {
+                [class^="grid__col-"],
+                [class*=" grid__col-"] {
+                    &:nth-child(#{$i}n+1) {
+                        clear: left;
+                    }
+                }
+            }
+        }
+    }
+
+    @media #{$sm-only} {
+        @for $i from 1 through 12 {
+            &--clear-sm-#{$i} {
+                [class^="grid__col-"],
+                [class*=" grid__col-"] {
+                    &:nth-child(#{$i}n+1) {
+                        clear: left;
+                    }
+                }
+            }
+        }
+    }
+
+    @media #{$md-only} {
+        @for $i from 1 through 12 {
+            &--clear-md-#{$i} {
+                [class^="grid__col-"],
+                [class*=" grid__col-"] {
+                    &:nth-child(#{$i}n+1) {
+                        clear: left;
+                    }
+                }
+            }
+        }
+    }
+
+    @media #{$lg-only} {
+        @for $i from 1 through 12 {
+            &--clear-lg-#{$i} {
+                [class^="grid__col-"],
+                [class*=" grid__col-"] {
+                    &:nth-child(#{$i}n+1) {
+                        clear: left;
+                    }
+                }
+            }
+        }
+    }
+}
+
+[class^="grid__col-"],
+[class*=" grid__col-"],
+%grid__col {
+    float: left;
+    // position: relative;
+    min-height: 1px;
+    padding-left: rem($gutter-small / 2);
+    padding-right: rem($gutter-small / 2);
+
+    @media #{$sm-up} {
+        padding-left: rem($gutter-medium / 2);
+        padding-right: rem($gutter-medium / 2);
+    }
+}
+
+@for $i from 1 through 12 {
+    .grid__col-xs-#{$i},
+    %grid__col-xs-#{$i} {
+        width: 100% / 12 * $i;
+    }
+
+    @media #{$xs-only} {
+        .offset__xs-#{$i} {
+            position: relative;
+            left: 100% / 12 * $i;
+        }
+    }
+}
+
+@for $i from 1 through 12 {
+    @media #{$sm-up} {
+        .grid__col-sm-#{$i},
+        %grid__col-sm-#{$i} {
+            width: 100% / 12 * $i;
+        }
+    }
+
+    @media #{$sm-only} {
+        .offset__sm-#{$i} {
+            position: relative;
+            left: 100% / 12 * $i;
+        }
+    }
+}
+
+@for $i from 1 through 12 {
+    @media #{$md-up} {
+        .grid__col-md-#{$i},
+        %grid__col-md-#{$i} {
+            width: 100% / 12 * $i;
+        }
+    }
+
+    @media #{$md-only} {
+        .offset__md-#{$i} {
+            position: relative;
+            left: 100% / 12 * $i;
+        }
+    }
+}
+
+@for $i from 1 through 12 {
+    @media #{$lg-up} {
+        .grid__col-lg-#{$i},
+        %grid__col-lg-#{$i} {
+            width: 100% / 12 * $i;
+        }
+    }
+
+    @media #{$lg-only} {
+        .offset__lg-#{$i} {
+            position: relative;
+            left: 100% / 12 * $i;
+        }
+    }
+}

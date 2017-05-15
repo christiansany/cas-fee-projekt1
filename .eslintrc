@@ -1,0 +1,107 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "no-unsafe-innerhtml"
+    ],
+    "env": {
+        "browser": true,
+        "node": true
+    },
+    "globals": {
+        "NIJS": true
+    },
+    /**
+     * http://eslint.org/docs/rules/
+     */
+    "rules": {
+        /**
+         * Possible Errors
+         */
+        "comma-dangle": 2,
+        "no-dupe-args": 2,
+        "no-dupe-keys": 2,
+        "no-empty": 2,
+        "no-invalid-regexp": 2,
+        "no-unreachable": 2,
+        "valid-jsdoc": [
+            2,
+            {
+                "prefer": {
+                    "return": "return"
+                },
+                "requireReturn": false
+            }
+        ],
+        "valid-typeof": 2,
+        /**
+         * Best Practices
+         */
+        "block-scoped-var": 2,
+        "default-case": 0,
+        "eqeqeq": 2,
+        "no-alert": 2,
+        "no-eq-null": 2,
+        "no-lone-blocks": 1,
+        "yoda": 1,
+        /**
+         * Strict Mode
+         */
+        "strict": [
+            2,
+            "global"
+        ],
+        /**
+         * Variables
+         */
+        "no-unused-vars": 1,
+        /**
+         * Stylistic Issues
+         */
+        "array-bracket-spacing": [
+            1,
+            "never"
+        ],
+        "camelcase": [
+            2,
+            {
+                "properties": "always"
+            }
+        ],
+        "comma-spacing": [
+            1,
+            {
+                "before": false,
+                "after": true
+            }
+        ],
+        "eol-last": 1,
+        "linebreak-style": [
+            0
+        ],
+        "indent": [
+            2,
+            4
+        ],
+        "no-underscore-dangle": [
+            0,
+            {
+                "allowAfterThis": true
+            }
+        ],
+        "quotes": [
+            1,
+            "single"
+        ],
+        "semi": [
+            2,
+            "always"
+        ],
+        "spaced-comment": [
+            1,
+            "always"
+        ]
+    }
+}

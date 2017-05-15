@@ -1,0 +1,13 @@
+/* ==|====================
+   Tools / Helpers
+   ======================= */
+
+%clearfix {
+    &::after {
+        content: ".";
+        clear: both;
+        display: block;
+        visibility: hidden;
+        height: 0;
+    }
+}

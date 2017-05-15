@@ -1,0 +1,13 @@
+/* ==|====================
+   Tools / Functions
+   ======================= */
+
+@function rem($size, $base: 16px) {
+    $remsize: $size / $base;
+    @return #{$remsize}rem;
+}
+
+@function em($size, $base: 16px) {
+    $remsize: $size / $base;
+    @return #{$remsize}em;
+}

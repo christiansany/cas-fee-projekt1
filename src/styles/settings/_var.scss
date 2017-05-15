@@ -1,0 +1,14 @@
+/* ==|====================
+   Settings / Vars
+   ======================= */
+
+// Font definitions
+$font-family-primary:               "Helvetia Neue", Arial, sans-serif;
+
+// Animation
+$animation-time-fast:               .12s;
+$animation-time-default:            .22s;
+$animation-time-slow:               .45s;
+
+$animation-easing-default:          cubic-bezier(.71, .25, .26, .85); /* custom */
+$animation-easing-fast:             ease-in-out; /* this feels faster than default */
