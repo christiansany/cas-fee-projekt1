@@ -42,7 +42,7 @@ export const buildStyles = () => {
 
 const scriptsPaths = {
     src: [
-        `${dirs.src}/scripts/main.js`
+        `${dirs.src}/scripts/app.js`
     ],
     watch: `${dirs.src}/scripts/**/*`,
     dest: `${dirs.dest}/scripts/`
@@ -69,13 +69,25 @@ export const copyFonts = () => {
         .pipe(gulp.dest(fontsPaths.dest));
 };
 
+const templatePaths = {
+    src: `${dirs.src}/templates/**/*`,
+    watch: `${dirs.src}/templates/**/*`,
+    dest: `${dirs.dest}/templates/`
+};
+
+export const copyTemplates = () => {
+    return gulp.src(templatePaths.src)
+        .pipe(gulp.dest(templatePaths.dest));
+};
+
 // Build task
 export const build = gulp.series(cleanStatic, gulp.parallel(
     buildStyles,
     // lintStyles, TODO: implement linting
     buildScripts,
     // lintScripts, TODO: implement linting
-    // copyFonts
+    copyFonts,
+    copyTemplates
 ));
 
 // Watch task
@@ -88,7 +100,8 @@ export const watch = gulp.series(() => {
 
     gulp.watch(stylesPaths.watch, gulp.parallel(buildStyles));
     gulp.watch(scriptsPaths.watch, gulp.parallel(buildScripts));
-    // gulp.watch(fontsPaths.watch, gulp.parallel(copyFonts));
+    gulp.watch(fontsPaths.watch, gulp.parallel(copyFonts));
+    gulp.watch(templatePaths.watch, gulp.parallel(copyTemplates));
 });
 
 export default gulp.series(build, watch);

@@ -2,38 +2,34 @@
    Settings / Fonts
    ======================= */
 
-// TODO: Find appropriate fonts for ToDo manager & implement
-
 /**
  * https://google-webfonts-helper.herokuapp.com/fonts/
  */
 
-/* catamaran-300 - latin */
+/* khula-regular - latin */
 @font-face {
-    font-family: "Catamaran";
-    font-style: normal;
-    font-weight: 300;
-    src: local("Catamaran Light"), local("Catamaran-Light"),
-    url("../assets/fonts/catamaran-v1-latin-300.woff2") format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url("../assets/fonts/catamaran-v1-latin-300.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
-}
-
-/* catamaran-regular - latin */
-@font-face {
-    font-family: "Catamaran";
+    font-family: "Khula";
     font-style: normal;
     font-weight: 400;
-    src: local("Catamaran"), local("Catamaran-Regular"),
-    url("../assets/fonts/catamaran-v1-latin-regular.woff2") format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url("../assets/fonts/catamaran-v1-latin-regular.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    src: local("Khula"), local("Khula-Regular"),
+    url("../assets/fonts/khula-v1-latin-regular.woff2") format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url("../assets/fonts/khula-v1-latin-regular.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
-
-/* catamaran-900 - latin */
+/* khula-600 - latin */
 @font-face {
-    font-family: "Catamaran";
+    font-family: "Khula";
     font-style: normal;
-    font-weight: 900;
-    src: local("Catamaran Black"), local("Catamaran-Black"),
-    url("../assets/fonts/catamaran-v1-latin-900.woff2") format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
-    url("../assets/fonts/catamaran-v1-latin-900.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+    font-weight: 600;
+    src: local("Khula Semibold"), local("Khula-Semibold"),
+    url("../assets/fonts/khula-v1-latin-600.woff2") format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url("../assets/fonts/khula-v1-latin-600.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+/* khula-700 - latin */
+@font-face {
+    font-family: "Khula";
+    font-style: normal;
+    font-weight: 700;
+    src: local("Khula Bold"), local("Khula-Bold"),
+    url("../assets/fonts/khula-v1-latin-700.woff2") format("woff2"), /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url("../assets/fonts/khula-v1-latin-700.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
 }
