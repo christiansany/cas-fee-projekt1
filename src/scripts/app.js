@@ -12,52 +12,51 @@ import './polyfills/nodelist-foreach';
 // TODO: implement object assign polyfill
 
 // Dependencies
-import pubsub from './helpers/pubsub';
-// import Handlebars from 'handlebars';
-const Handlebars = require('handlebars');
+import observer from './libs/observer';
+import themeSwitcher from './factories/theme-switcher';
+// import pubsub from './helpers/pubsub';
+// import handlebars from 'handlebars';
+import { view } from './composites/mvc';
+// const Handlebars = require('handlebars');
 
-// App
-const App = function (el) {
-    console.log(el);
-    this._body = document.body;
-    this._view = new AppView(el);
+// AppController factory
+const app = function (el) {
+    const self = {
+        view: AppView(el),
+        themeSwitcher: themeSwitcher()
+    };
 
-    this._body.classList.add('theme-light');
+    // Listen to Events from the View
+    self.view.on('button-clicked', () => {
+        self.themeSwitcher.toggleTheme();
+    });
+
+    return self;
 };
 
-const View = function () {
+// AppView factory
+const AppView = function ($el, data) {
 
-};
+    // Create instance and add two composites (observer and view)
+    const self = Object.assign({}, observer(), view(), {
+        $el: $el,
+        data: data || {}
+    });
 
-View.prototype.render = function() {
-    this._el.innerHTML = this._template(this._data);
-};
-
-const AppView = function (el) {
-
-    const _this = this;
-    _this._el = el;
-    _this._data = {};
-
-    fetch('./build/templates/app.hbs')
-        .then(response => response.text())
-        .then(template => {
-            _this._template = Handlebars.compile(template);
-            _this.render();
-            _this.render2();
+    // Set up the eventbinding every time the DOM gets rerendered (reactive)
+    self.on('rendered', () => {
+        self.$el.querySelector('button').addEventListener('click', (e) => {
+            self.trigger('button-clicked', e);
         });
+    });
 
-    // this._template = Handlebars.compile()
+    // Fetch the template compile it, render it the render lsitener will automatically attach/reattach events
+    self.fetch('./build/templates/app.hbs')
+        .then(self.compile.bind(self))
+        .then(self.render.bind(self));
+
+    return self;
 };
 
-// Inherit functions from View
-// Object.setPrototypeOf(AppView, View);
 
-// Add inheritance from View.prototype
-AppView.prototype = Object.assign({}, View.prototype, {
-    render2() {
-        console.log('render 2 function');
-    }
-});
-
-new App(document.querySelector('app'));
+app(document.querySelector('app'));
