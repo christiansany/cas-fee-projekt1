@@ -9,7 +9,7 @@
 import './polyfills/element-matches';
 import './polyfills/element-closest';
 import './polyfills/nodelist-foreach';
-// TODO: implement object assign polyfill
+import './polyfills/object-assign';
 
 // Dependencies
 import observer from './libs/observer';
