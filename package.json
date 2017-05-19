@@ -42,6 +42,7 @@
     "gulp-sass": "^2.3.2",
     "gulp-sourcemaps": "^2.2.0",
     "gulp-webpack": "^1.5.0",
+    "handlebars-loader": "^1.5.0",
     "vinyl-named": "^1.1.0"
   }
 }

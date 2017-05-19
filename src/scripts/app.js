@@ -16,15 +16,34 @@ import observer from './libs/observer';
 import themeSwitcher from './factories/theme-switcher';
 // import pubsub from './helpers/pubsub';
 // import handlebars from 'handlebars';
-import { view } from './composites/mvc';
+// import handlebars from 'handlebars';
+import render from './composites/render';
+// import { view } from './composites/mvc';
 // const Handlebars = require('handlebars');
+import template from '../templates/app.hbs';
+
+// Model
+import NoteModel from './models/note-model';
+
+// console.log(templatess);
+
+
+
 
 // AppController factory
-const app = function (el) {
+const App = (el) => {
     const self = {
+        model: NoteModel,
         view: AppView(el),
         themeSwitcher: themeSwitcher()
     };
+
+    // TODO: this is only temprarily for testing in the browser
+    window.model = self.model;
+
+    self.model.stream('notes', (notes) => {
+        self.view.render({ notes });
+    });
 
     // Listen to Events from the View
     self.view.on('button-clicked', () => {
@@ -35,28 +54,23 @@ const app = function (el) {
 };
 
 // AppView factory
-const AppView = function ($el, data) {
+const AppView = ($el) => {
 
-    // Create instance and add two composites (observer and view)
-    const self = Object.assign({}, observer(), view(), {
+    // Create instance and add two composites (observer and render)
+    const self = Object.assign({}, observer(), render, {
         $el: $el,
-        data: data || {}
+        // template: handlebars.compile(template)
+        template
     });
 
     // Set up the eventbinding every time the DOM gets rerendered (reactive)
     self.on('rendered', () => {
-        self.$el.querySelector('button').addEventListener('click', (e) => {
-            self.trigger('button-clicked', e);
-        });
+        // self.$el.querySelector('button').addEventListener('click', (e) => {
+        //     self.trigger('button-clicked', e);
+        // });
     });
-
-    // Fetch the template compile it, render it the render lsitener will automatically attach/reattach events
-    self.fetch('./build/templates/app.hbs')
-        .then(self.compile.bind(self))
-        .then(self.render.bind(self));
 
     return self;
 };
 
-
-app(document.querySelector('app'));
+App(document.querySelector('app'));

@@ -6,7 +6,7 @@ import handlebars from 'handlebars';
  * Acts as composite for views
  * TODO: documentation
  */
-export const view = () => {
+export const view = {
 
     /**
      * Fetch a template
@@ -16,36 +16,50 @@ export const view = () => {
      * @param {String} url to fetch
      * @return {Promise} with responsetext
      */
-    const fetch = function (url) {
+    fetch (url) {
         return window.fetch(url)
             .then(response => response.text());
-    };
+    },
 
-    /*
-     * TODO: documentation
+    /**
+     * Compiler
+     *
+     * @param {String} template to compile
+     * @return {Promise} with compiled template
      */
-    const compile = function (template) {
+    compile (template) {
         const self = this;
         return new Promise(resolve => {
+
+            // Save compiled Template in View
             self.template = handlebars.compile(template);
+            console.log('tempalte gets assigned');
+
+            // Resolve Promise with template
             resolve(self.template);
         });
-    };
+    },
 
-    /*
-     * TODO: documentation
+    /**
+     * Render
+     *
+     * @param {String} template to compile
+     * @return {Promise} with compiled template
      */
-    const render = function () {
+    render () {
+        const self = this;
         return new Promise(resolve => {
-            this.$el.innerHTML = this.template(this.data);
-            this.trigger('rendered', this.$el);
-            resolve(this.$el);
-        });
-    };
 
-    return {
-        fetch,
-        compile,
-        render
-    };
+            console.log('render:', self.data);
+
+            // Render precompiled template with data into the DOM
+            self.$el.innerHTML = self.template(self.data);
+
+            // Trigger listeners for the rendered event
+            self.trigger('rendered', self.$el);
+
+            // Resolve Promise with rendered ParentElement (contains rendered)
+            resolve(self.$el);
+        });
+    }
 };
