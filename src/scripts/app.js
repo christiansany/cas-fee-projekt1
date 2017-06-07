@@ -32,10 +32,16 @@ import NoteModel from './models/note-model';
 
 // AppController factory
 const App = (el) => {
+
+    const $state = {
+        theme: 'light'
+    }
+
     const self = {
         model: NoteModel,
-        view: AppView(el),
-        themeSwitcher: themeSwitcher()
+        view: AppView(el, $state),
+        themeSwitcher: themeSwitcher(),
+        $state
     };
 
     // TODO: this is only temprarily for testing in the browser
@@ -46,29 +52,41 @@ const App = (el) => {
     });
 
     // Listen to Events from the View
-    self.view.on('button-clicked', () => {
-        self.themeSwitcher.toggleTheme();
+    self.view.on('theme-switch', (newTheme) => {
+        if(self.$state.theme !== newTheme) {
+            self.view.setTheme(newTheme, self.$state.theme);
+            self.$state.theme = newTheme;
+        }
     });
 
     return self;
 };
 
 // AppView factory
-const AppView = ($el) => {
+const AppView = ($el, state) => {
 
     // Create instance and add two composites (observer and render)
     const self = Object.assign({}, observer(), render, {
         $el: $el,
-        // template: handlebars.compile(template)
         template
     });
 
     // Set up the eventbinding every time the DOM gets rerendered (reactive)
     self.on('rendered', () => {
-        // self.$el.querySelector('button').addEventListener('click', (e) => {
-        //     self.trigger('button-clicked', e);
-        // });
+        const themeSwitchTriggers = self.$el.querySelectorAll('[data-theme-switcher]');
+        themeSwitchTriggers.forEach((el) => {
+            el.addEventListener('click', () => {
+
+                // trigger event on what the controlller can listen
+                self.trigger('theme-switch', el.getAttribute('data-theme'));
+            });
+        });
     });
+
+    self.setTheme = (newTheme, oldTheme) => {
+        document.body.classList.remove(oldTheme);
+        document.body.classList.add(newTheme);
+    };
 
     return self;
 };

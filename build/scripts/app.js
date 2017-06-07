@@ -91,10 +91,16 @@
 	// import { view } from './composites/mvc';
 	// const Handlebars = require('handlebars');
 	var App = function App(el) {
+	
+	    var $state = {
+	        theme: 'light'
+	    };
+	
 	    var self = {
 	        model: _noteModel2.default,
-	        view: AppView(el),
-	        themeSwitcher: (0, _themeSwitcher2.default)()
+	        view: AppView(el, $state),
+	        themeSwitcher: (0, _themeSwitcher2.default)(),
+	        $state: $state
 	    };
 	
 	    // TODO: this is only temprarily for testing in the browser
@@ -105,8 +111,11 @@
 	    });
 	
 	    // Listen to Events from the View
-	    self.view.on('button-clicked', function () {
-	        self.themeSwitcher.toggleTheme();
+	    self.view.on('theme-switch', function (newTheme) {
+	        if (self.$state.theme !== newTheme) {
+	            self.view.setTheme(newTheme, self.$state.theme);
+	            self.$state.theme = newTheme;
+	        }
 	    });
 	
 	    return self;
@@ -131,21 +140,30 @@
 	 */
 	
 	// Import polyfills
-	var AppView = function AppView($el) {
+	var AppView = function AppView($el, state) {
 	
 	    // Create instance and add two composites (observer and render)
 	    var self = Object.assign({}, (0, _observer2.default)(), _render2.default, {
 	        $el: $el,
-	        // template: handlebars.compile(template)
 	        template: _app2.default
 	    });
 	
 	    // Set up the eventbinding every time the DOM gets rerendered (reactive)
 	    self.on('rendered', function () {
-	        // self.$el.querySelector('button').addEventListener('click', (e) => {
-	        //     self.trigger('button-clicked', e);
-	        // });
+	        var themeSwitchTriggers = self.$el.querySelectorAll('[data-theme-switcher]');
+	        themeSwitchTriggers.forEach(function (el) {
+	            el.addEventListener('click', function () {
+	
+	                // trigger event on what the controlller can listen
+	                self.trigger('theme-switch', el.getAttribute('data-theme'));
+	            });
+	        });
 	    });
+	
+	    self.setTheme = function (newTheme, oldTheme) {
+	        document.body.classList.remove(oldTheme);
+	        document.body.classList.add(newTheme);
+	    };
 	
 	    return self;
 	};
@@ -474,7 +492,7 @@
 	var Handlebars = __webpack_require__(10);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    return "<h1>Base Handlbars file</h1>\n\n<button type=\"button\" name=\"button\">Farbbutton</button>\n";
+	    return "<div class=\"metabar\">\n    <div class=\"grid__container\">\n        <div class=\"grid__row\">\n            <div class=\"grid__col-xs-12\">\n                <div class=\"theme-switcher\">\n                    <span class=\"theme-switcher__label\">Theme</span>\n\n                    <ul class=\"theme-switcher__list\">\n                        <li class=\"theme-switcher__item\">\n                            <a class=\"theme-switcher__trigger is-dark\" href=\"#\" title=\"Dark\" data-theme=\"dark\" data-theme-switcher></a>\n                        </li>\n                        <li class=\"theme-switcher__item\">\n                            <a class=\"theme-switcher__trigger is-light\" href=\"#\" title=\"Light\" data-theme=\"light\" data-theme-switcher></a>\n                        </li>\n                    </ul>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
 	},"useData":true});
 
 /***/ }),
