@@ -2,6 +2,9 @@
    Main
    ======================= */
 
+// TODO: download fonts and include local fonts
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,500');
+
 // Settings
 @import "settings/fonts";
 @import "settings/var";
@@ -21,7 +24,10 @@
 
 // Components
 @import "components/theme-switcher";
-@import "components/metabar";
+@import "components/pagetitle";
+@import "components/filter";
+@import "components/btn";
+@import "components/action-bar";
 
 // Atoms
 

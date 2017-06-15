@@ -9,12 +9,25 @@ html {
 }
 
 body {
+
+    --main-bg-color: $color-white;
+    --font-color: $color-black;
+    --color-primary: $color-primary;
+    --color-secondary: $color-secondary;
+
     font-size: 100%;
-    color: $color-black;
     font-family: $font-family-primary;
-    font-weight: 400;
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: var(--font-color);
+    background-color: var(--main-bg-color);
+    transition: background-color .22s ease-in-out, color .22s ease-in-out;
+
+    &.dark {
+        --main-bg-color: black;
+        --font-color: $color-white;
+    }
 }
 
 h1 {

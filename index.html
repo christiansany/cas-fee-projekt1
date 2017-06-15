@@ -12,7 +12,61 @@
         <link rel="stylesheet" href="./build/styles/main.css">
     </head>
     <body>
-        <app></app>
+
+        <header>
+            <div class="grid__container">
+                <div class="grid__row">
+                    <div class="grid__col-xs-12">
+                        <div class="theme-switcher" data-theme-switcher>
+                            <span class="theme-switcher__label">Theme</span>
+
+                            <ul class="theme-switcher__list">
+                                <li class="theme-switcher__item">
+                                    <a class="theme-switcher__trigger is-light is-active" href="#" title="Light" data-switch-trigger="light"></a>
+                                </li>
+                                <li class="theme-switcher__item">
+                                    <a class="theme-switcher__trigger is-dark" href="#" title="Dark" data-switch-trigger="dark"></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid__row">
+                    <div class="grid__col-xs-12">
+                        <h1 class="pagetitle">
+                            <span class="pagetitle__highlight">Noter</span> Get organised using the best notesapp there is.
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="content">
+            <div class="grid__container">
+                <div class="grid__row">
+                    <div class="grid__col-xs-12">
+
+                        <div class="action-bar">
+                            <ul class="filter" data-filter>
+                                <li class="filter__item">
+                                    <span class="filter__label">Sort by</span>
+                                </li>
+                                <li class="filter__item">
+                                    <a href="#" class="filter__trigger is-active" data-filter-trigger="finishdate">Finishdate</a>
+                                </li>
+                                <li class="filter__item">
+                                    <a href="#" class="filter__trigger" data-filter-trigger="creationdate">Creationdate</a>
+                                </li>
+                                <li class="filter__item">
+                                    <a href="#" class="filter__trigger" data-filter-trigger="importance">Importance</a>
+                                </li>
+                            </ul>
+                            <button class="btn btn-small" data-new-note>+ New Note</button>
+                            <!-- <input type="checkbox" id="show-finished"> <label for="show-finished">Show finished</label> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script src="./build/scripts/app.js"></script>
     </body>

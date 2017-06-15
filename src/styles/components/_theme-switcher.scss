@@ -4,15 +4,15 @@
 
 .theme-switcher {
     float: right;
-    height: rem(20px);
+    height: rem(64px);
 }
 
 .theme-switcher__label {
     display: block;
     float: left;
     font-size: rem(14px);
-    line-height: (21 / 14);
-    margin-right: rem(10px);
+    line-height: (64 / 14);
+    margin-right: rem(20px);
 }
 
 .theme-switcher__list {
@@ -26,25 +26,50 @@
 .theme-switcher__item {
     display: block;
     float: left;
-    padding-top: rem(2px);
-    padding-bottom: rem(2px);
+    padding-top: rem(20px);
+    padding-bottom: rem(20px);
 
     &:not(:last-child) {
-        margin-right: rem(5px);
+        margin-right: rem(10px);
     }
 }
 
 .theme-switcher__trigger {
+    position: relative;
     display: block;
-    height: rem(16px);
-    width: rem(16px);
-    border: 1px solid grey;
+    height: rem(24px);
+    width: rem(24px);
+    border: 1px solid $color-offblack;
+    border-radius: 50%;
+    transition: border .22s ease;
+
+    &:after {
+        content: " ";
+        position: absolute;
+        bottom: rem(-8px);
+        transform: translateY(#{rem(10px)});
+        height: rem(2px);
+        background-color: transparent;
+        width: 100%;
+        cursor: default;
+        transition: transform .22s ease-in-out, background-color .22s ease-in-out;
+    }
 
     &.is-dark {
-        background-color: black;
+        background-color: #282828;
     }
 
     &.is-light {
-        background-color: white;
+        background-color: $color-white;
+    }
+
+    &.is-active {
+        //border: 2px solid $color-primary;
+
+        &:after {
+            transform: translateY(0);
+            //bottom: -8px;
+            background-color: $color-secondary;
+        }
     }
 }

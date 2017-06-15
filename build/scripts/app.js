@@ -61,77 +61,59 @@
 	
 	__webpack_require__(5);
 	
-	var _observer = __webpack_require__(6);
-	
-	var _observer2 = _interopRequireDefault(_observer);
-	
-	var _themeSwitcher = __webpack_require__(7);
-	
-	var _themeSwitcher2 = _interopRequireDefault(_themeSwitcher);
-	
-	var _render = __webpack_require__(8);
-	
-	var _render2 = _interopRequireDefault(_render);
-	
-	var _app = __webpack_require__(9);
+	var _app = __webpack_require__(6);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
-	var _noteModel = __webpack_require__(29);
-	
-	var _noteModel2 = _interopRequireDefault(_noteModel);
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// console.log(templatess);
+	// Theme Switcher factory
+	var createThemeSwitcher = function createThemeSwitcher(container) {
+	    var options = ['light', 'dark'];
 	
+	    /**
+	     * Set active theme
+	     *
+	     * @param {String} theme to switch to
+	     */
+	    var setTheme = function setTheme(theme) {
+	        document.body.classList.toggle(options[0], options[0] === theme);
+	        document.body.classList.toggle(options[1], options[1] === theme);
 	
-	// AppController factory
-	
-	// import { view } from './composites/mvc';
-	// const Handlebars = require('handlebars');
-	var App = function App(el) {
-	
-	    var $state = {
-	        theme: 'light'
+	        triggers.forEach(function (trigger) {
+	            trigger.classList.toggle('is-active', trigger.getAttribute('data-switch-trigger') === theme);
+	        });
 	    };
 	
-	    var self = {
-	        model: _noteModel2.default,
-	        view: AppView(el, $state),
-	        themeSwitcher: (0, _themeSwitcher2.default)(),
-	        $state: $state
+	    var triggers = container.querySelectorAll('[data-switch-trigger]');
+	
+	    triggers.forEach(function (trigger) {
+	        trigger.addEventListener('click', function () {
+	            setTheme(trigger.getAttribute('data-switch-trigger'));
+	        });
+	    });
+	
+	    // Set option1 as default theme at pageload
+	    setTheme(options[0]);
+	
+	    // Some serious exposing happens here
+	    return {
+	        setTheme: setTheme
 	    };
-	
-	    // TODO: this is only temprarily for testing in the browser
-	    window.model = self.model;
-	
-	    self.model.stream('notes', function (notes) {
-	        self.view.render({ notes: notes });
-	    });
-	
-	    // Listen to Events from the View
-	    self.view.on('theme-switch', function (newTheme) {
-	        if (self.$state.theme !== newTheme) {
-	            self.view.setTheme(newTheme, self.$state.theme);
-	            self.$state.theme = newTheme;
-	        }
-	    });
-	
-	    return self;
 	};
 	
-	// AppView factory
-	
-	
-	// Model
-	
-	// import pubsub from './helpers/pubsub';
-	// import handlebars from 'handlebars';
-	// import handlebars from 'handlebars';
+	// TODO: Remove unused when finishind app
 	
 	
 	// Dependencies
+	// import observer from './libs/observer';
+	// import themeSwitcher from './factories/theme-switcher';
+	// import pubsub from './helpers/pubsub';
+	// import handlebars from 'handlebars';
+	// import handlebars from 'handlebars';
+	// import render from './composites/render';
+	// import { view } from './composites/mvc';
+	// const Handlebars = require('handlebars');
 	/**
 	 * @file
 	 * Main entry point of the todo manager app
@@ -140,35 +122,13 @@
 	 */
 	
 	// Import polyfills
-	var AppView = function AppView($el, state) {
+	var themeSwitcher = createThemeSwitcher(document.querySelector('[data-theme-switcher]'));
 	
-	    // Create instance and add two composites (observer and render)
-	    var self = Object.assign({}, (0, _observer2.default)(), _render2.default, {
-	        $el: $el,
-	        template: _app2.default
-	    });
+	// const themeSwitcher = document.querySelectorAll()
 	
-	    // Set up the eventbinding every time the DOM gets rerendered (reactive)
-	    self.on('rendered', function () {
-	        var themeSwitchTriggers = self.$el.querySelectorAll('[data-theme-switcher]');
-	        themeSwitchTriggers.forEach(function (el) {
-	            el.addEventListener('click', function () {
 	
-	                // trigger event on what the controlller can listen
-	                self.trigger('theme-switch', el.getAttribute('data-theme'));
-	            });
-	        });
-	    });
-	
-	    self.setTheme = function (newTheme, oldTheme) {
-	        document.body.classList.remove(oldTheme);
-	        document.body.classList.add(newTheme);
-	    };
-	
-	    return self;
-	};
-	
-	App(document.querySelector('app'));
+	// Model
+	// import NoteModel from './models/note-model';
 
 /***/ }),
 /* 2 */
@@ -272,241 +232,26 @@
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	/**
-	 * This module implements an observer pattern.
-	 * It can be used to extend the functionality of a module.
-	 *
-	 * @example
-	 * import observer from 'composites/observer';
-	 *
-	 * export default () => {
-	 *  let instance = {};
-	 *  ...
-	 *  ...
-	 *  instance = Object.assign({}, instance, observer());
-	 * }
-	 *
-	 * @author christian.sany@notch-interactive.com, diego.morales@notch-interactive.com
-	 *
-	 * @module composites/observer
-	 */
-	
-	/**
-	 * There's no need to pass the instance of the parent module to this composite.
-	 * @static
-	 * @function factory
-	 * @returns {object} Observer instance
-	 */
-	exports.default = function () {
-	
-	    var uid = -1,
-	        events = {},
-	
-	
-	    /**
-	     * Subscribes to an Event.
-	     *
-	     * @param {string} event - Name of the event.
-	     * @param {function} listener - Callback function.
-	     * @param {boolean} once - If true, removes a listener after first execution
-	     * @returns {number} Returns an id for this subscription.
-	     */
-	    on = function on(event, listener, once) {
-	        uid++;
-	
-	        once = once || false;
-	
-	        if (!events[event]) {
-	            events[event] = { queue: [] };
-	        }
-	
-	        events[event].queue.push({
-	            uid: uid,
-	            listener: listener,
-	            once: once
-	        });
-	
-	        return uid;
-	    },
-	
-	
-	    /**
-	     * Unsubscribes an Event.
-	     * If an event name is passed, all listeners to this event will be removed.
-	     *
-	     * @param {string|number} event - Can be id of subscription or event name.
-	     * @returns {string|number} Returns the removed id or event name. -1 will be returned if nothing was removed.
-	     */
-	    off = function off(event) {
-	        if (typeof event === 'number') {
-	            for (var e in events) {
-	                if (events.hasOwnProperty(e)) {
-	                    for (var i = events[e].queue.length; i--;) {
-	                        if (events[e].queue[i].uid === event) {
-	                            events[e].queue.splice(i, 1);
-	
-	                            if (!events[e].queue.length) {
-	                                delete events[e];
-	                            }
-	
-	                            return event;
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	
-	        if (typeof event === 'string') {
-	            delete events[event];
-	            return event;
-	        }
-	
-	        return -1;
-	    },
-	
-	
-	    /**
-	     * Triggers all listeners of event.
-	     *
-	     * @param {string} event - Name of Event
-	     * @param {object} data - Data which will be passed to listeners. Can actually also be string, number or array. The listener should simply be able to handle the passed data.
-	     */
-	    trigger = function trigger(event) {
-	        if (!events[event] || !events[event].queue.length) {
-	            return;
-	        }
-	
-	        var data = [].concat(Array.prototype.slice.call(arguments)).slice(1);
-	
-	        // Create copy, in case the queue gets mutated inside a callback
-	        var eventQueue = events[event].queue.slice(0);
-	
-	        // Cycle through topics queue, fire!
-	        eventQueue.forEach(function (item) {
-	            item.listener.apply(item, _toConsumableArray(data)); // ES5 compliant: item.listener.apply(null, data);
-	            if (item.once) {
-	
-	                // Unsubscribe
-	                off(item.uid);
-	            }
-	        });
-	    };
-	
-	    return {
-	        on: on,
-	        off: off,
-	        trigger: trigger
-	    };
-	};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	// ThemeSwitcher factory
-	// TODO: documentation
-	exports.default = function (options) {
-	    var self = {};
-	    var settings = Object.assign({}, {
-	        active: 0,
-	        options: ['theme-light', 'theme-dark']
-	    }, options);
-	
-	    /*
-	     * TODO: documentation
-	     */
-	    self.toggleTheme = function () {
-	        settings.active = settings.active === 1 ? 0 : 1;
-	        document.body.classList.toggle(settings.options[0], settings.active === 0);
-	        document.body.classList.toggle(settings.options[1], settings.active === 1);
-	    };
-	
-	    // Initiation logic
-	    document.body.classList.toggle(settings.options[settings.active], true);
-	
-	    return self;
-	};
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	/**
-	 * @file
-	 * Render composite
-	 *
-	 * @author Christian Sany <christian.sany@bluewin.ch>
-	 */
-	exports.default = {
-	
-	    /**
-	     * Render
-	     *
-	     * @param {Object} data to be rendered inside the template
-	     * @return {Promise} with compiled template
-	     */
-	    render: function render(data) {
-	
-	        data = data || self.data;
-	
-	        var self = this;
-	        return new Promise(function (resolve) {
-	
-	            // Render precompiled template with data into the DOM
-	            self.$el.innerHTML = self.template(data);
-	
-	            // Trigger listeners for the rendered event
-	            self.trigger('rendered', self.$el);
-	
-	            // Resolve Promise with rendered ParentElement (contains rendered)
-	            resolve(self.$el);
-	        });
-	    }
-	};
-
-/***/ }),
-/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(10);
+	var Handlebars = __webpack_require__(7);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    return "<div class=\"metabar\">\n    <div class=\"grid__container\">\n        <div class=\"grid__row\">\n            <div class=\"grid__col-xs-12\">\n                <div class=\"theme-switcher\">\n                    <span class=\"theme-switcher__label\">Theme</span>\n\n                    <ul class=\"theme-switcher__list\">\n                        <li class=\"theme-switcher__item\">\n                            <a class=\"theme-switcher__trigger is-dark\" href=\"#\" title=\"Dark\" data-theme=\"dark\" data-theme-switcher></a>\n                        </li>\n                        <li class=\"theme-switcher__item\">\n                            <a class=\"theme-switcher__trigger is-light\" href=\"#\" title=\"Light\" data-theme=\"light\" data-theme-switcher></a>\n                        </li>\n                    </ul>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
 	},"useData":true});
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(11)['default'];
+	module.exports = __webpack_require__(8)['default'];
 
 /***/ }),
-/* 11 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -532,30 +277,30 @@
 	  }
 	}
 	
-	var _handlebarsBase = __webpack_require__(12);
+	var _handlebarsBase = __webpack_require__(9);
 	
 	var base = _interopRequireWildcard(_handlebarsBase);
 	
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
 	
-	var _handlebarsSafeString = __webpack_require__(26);
+	var _handlebarsSafeString = __webpack_require__(23);
 	
 	var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 	
-	var _handlebarsException = __webpack_require__(14);
+	var _handlebarsException = __webpack_require__(11);
 	
 	var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 	
-	var _handlebarsUtils = __webpack_require__(13);
+	var _handlebarsUtils = __webpack_require__(10);
 	
 	var Utils = _interopRequireWildcard(_handlebarsUtils);
 	
-	var _handlebarsRuntime = __webpack_require__(27);
+	var _handlebarsRuntime = __webpack_require__(24);
 	
 	var runtime = _interopRequireWildcard(_handlebarsRuntime);
 	
-	var _handlebarsNoConflict = __webpack_require__(28);
+	var _handlebarsNoConflict = __webpack_require__(25);
 	
 	var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 	
@@ -588,7 +333,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 12 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -601,17 +346,17 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
-	var _exception = __webpack_require__(14);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
-	var _helpers = __webpack_require__(15);
+	var _helpers = __webpack_require__(12);
 	
-	var _decorators = __webpack_require__(23);
+	var _decorators = __webpack_require__(20);
 	
-	var _logger = __webpack_require__(25);
+	var _logger = __webpack_require__(22);
 	
 	var _logger2 = _interopRequireDefault(_logger);
 	
@@ -698,7 +443,7 @@
 	exports.logger = _logger2['default'];
 
 /***/ }),
-/* 13 */
+/* 10 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -828,7 +573,7 @@
 	}
 
 /***/ }),
-/* 14 */
+/* 11 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -886,7 +631,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 15 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -899,31 +644,31 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _helpersBlockHelperMissing = __webpack_require__(16);
+	var _helpersBlockHelperMissing = __webpack_require__(13);
 	
 	var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 	
-	var _helpersEach = __webpack_require__(17);
+	var _helpersEach = __webpack_require__(14);
 	
 	var _helpersEach2 = _interopRequireDefault(_helpersEach);
 	
-	var _helpersHelperMissing = __webpack_require__(18);
+	var _helpersHelperMissing = __webpack_require__(15);
 	
 	var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 	
-	var _helpersIf = __webpack_require__(19);
+	var _helpersIf = __webpack_require__(16);
 	
 	var _helpersIf2 = _interopRequireDefault(_helpersIf);
 	
-	var _helpersLog = __webpack_require__(20);
+	var _helpersLog = __webpack_require__(17);
 	
 	var _helpersLog2 = _interopRequireDefault(_helpersLog);
 	
-	var _helpersLookup = __webpack_require__(21);
+	var _helpersLookup = __webpack_require__(18);
 	
 	var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 	
-	var _helpersWith = __webpack_require__(22);
+	var _helpersWith = __webpack_require__(19);
 	
 	var _helpersWith2 = _interopRequireDefault(_helpersWith);
 	
@@ -938,14 +683,14 @@
 	}
 
 /***/ }),
-/* 16 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('blockHelperMissing', function (context, options) {
@@ -981,7 +726,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 17 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -995,9 +740,9 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
-	var _exception = __webpack_require__(14);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
@@ -1083,7 +828,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 18 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1095,7 +840,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _exception = __webpack_require__(14);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
@@ -1114,14 +859,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 19 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('if', function (conditional, options) {
@@ -1147,7 +892,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 20 */
+/* 17 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1177,7 +922,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 21 */
+/* 18 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1193,14 +938,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 22 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('with', function (context, options) {
@@ -1230,7 +975,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 23 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1243,7 +988,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _decoratorsInline = __webpack_require__(24);
+	var _decoratorsInline = __webpack_require__(21);
 	
 	var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 	
@@ -1252,14 +997,14 @@
 	}
 
 /***/ }),
-/* 24 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerDecorator('inline', function (fn, props, container, options) {
@@ -1285,14 +1030,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 25 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
 	var logger = {
 	  methodMap: ['debug', 'info', 'warn', 'error'],
@@ -1336,7 +1081,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 26 */
+/* 23 */
 /***/ (function(module, exports) {
 
 	// Build out our basic SafeString type
@@ -1355,7 +1100,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 27 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1389,15 +1134,15 @@
 	  }
 	}
 	
-	var _utils = __webpack_require__(13);
+	var _utils = __webpack_require__(10);
 	
 	var Utils = _interopRequireWildcard(_utils);
 	
-	var _exception = __webpack_require__(14);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
-	var _base = __webpack_require__(12);
+	var _base = __webpack_require__(9);
 	
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
@@ -1680,7 +1425,7 @@
 	}
 
 /***/ }),
-/* 28 */
+/* 25 */
 /***/ (function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
@@ -1703,146 +1448,6 @@
 	
 	module.exports = exports['default'];
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _observer = __webpack_require__(6);
-	
-	var _observer2 = _interopRequireDefault(_observer);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } // Dependencies
-	
-	
-	// NoteModel factory
-	var NoteModel = function NoteModel() {
-	    var self = {};
-	    var notes = []; // private variable
-	    var ob = (0, _observer2.default)(); // generate private observer for model internal communication
-	
-	    // Private functions
-	    var fetchNotes = function fetchNotes() {
-	
-	        // Fetch notes from localStorage
-	        // This will later be replaced by the ajaxcall
-	        var temp = JSON.parse(localStorage.getItem('notes'));
-	
-	        // Check if notes found in localStorage
-	        if (temp !== null) {
-	            // notes = temp;
-	            notes.push.apply(notes, _toConsumableArray(temp));
-	
-	            // Set the internal uid to the highest found note
-	            notes.forEach(function (note) {
-	                return uid = uid < note.uid ? note.uid : uid;
-	            });
-	        }
-	
-	        // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-	        ob.trigger('notes', notes, 'fetched');
-	
-	        // Set fetched to true, since the notes are fetched now
-	        fetched = true;
-	    };
-	
-	    // Internal flag
-	    var fetched = false; // Set to true when initial fetching for the data is finished
-	
-	    var uid = -1;
-	
-	    // Public functions
-	    self.add = function (note) {
-	        // TODO: add checking of object
-	        // TODO: performe ajax like task (ajax comes later)
-	
-	        console.log('add', note);
-	
-	        // Creature unique id for note and assign it to the note
-	        uid++;
-	        Object.assign(note, {
-	            uid: uid
-	        });
-	
-	        return new Promise(function (resolve, reject) {
-	            try {
-	
-	                // Push on notes
-	                notes.push(note);
-	
-	                // Save notes to localStorage
-	                localStorage.setItem('notes', JSON.stringify(notes));
-	
-	                // Trigger stream subscribtions
-	                ob.trigger('notes', notes, 'added');
-	
-	                // Resolve promise with
-	                resolve(note);
-	            } catch (e) {
-	
-	                // in case the later ajax call fails
-	                reject(e);
-	            }
-	        });
-	    };
-	
-	    self.update = function (uid, note) {
-	
-	        console.log('update', note);
-	
-	        // Trigger stream subscribtions
-	        ob.trigger('notes', notes, 'updated');
-	    };
-	
-	    self.remove = function (uid, note) {
-	
-	        console.log('remove', note);
-	
-	        // Trigger stream subscribtions
-	        ob.trigger('notes', notes, 'removed');
-	    };
-	
-	    /**
-	     * Steams are beeing subscribed and a callback is given
-	     *
-	     * Goal with the stream is to give an redux like feeling
-	     *
-	     * @param {String} content to stream ('notes', 'noteById')
-	     * @param {Function} callback to call
-	     *
-	     */
-	    self.stream = function (content, callback) {
-	
-	        // When notes array is
-	        if (content === 'notes') {
-	
-	            // Already fetched
-	            if (fetched) {
-	
-	                // Call callback immediatly
-	                callback(notes);
-	            }
-	
-	            // Subscribe to stream, callback will be called every time a note gets added, removed or mutated
-	            ob.on('notes', callback);
-	        }
-	    };
-	
-	    // Fetch notes from the server
-	    fetchNotes();
-	
-	    return self;
-	};
-	
-	exports.default = NoteModel();
 
 /***/ })
 /******/ ]);

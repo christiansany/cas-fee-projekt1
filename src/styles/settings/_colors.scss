@@ -5,12 +5,14 @@
 // TODO: create color pallet
 
 /* Brand colors */
-$color-primary:              rgb(118, 122, 225);
-$color-primary-light:        rgb(133, 136, 225);
+$color-primary:              #ff5a5f;
+$color-secondary:            #008489;
+// $color-primary-light:        rgb(133, 136, 225);
 
 $color-white:                rgb(255, 255, 255);
 $color-offwhite:             rgb(245, 245, 245);
 $color-light-grey:           rgb(230, 230, 230);
+$color-grey:                 #e4e4e4;
 
 $color-black:                rgb(34, 34, 34);
-$color-offblack:             rgb(100, 100, 100);
+$color-offblack:             #484848;

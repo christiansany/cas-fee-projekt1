@@ -1,0 +1,16 @@
+/* ==|====================
+   Component / Action Bar
+   ======================= */
+
+.action-bar {
+    border-bottom: 1px solid $color-grey;
+    overflow: hidden;
+
+    .filter {
+        float: left;
+    }
+
+    .btn {
+        float: right;
+    }
+}
