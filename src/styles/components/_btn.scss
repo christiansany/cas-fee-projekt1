@@ -5,13 +5,12 @@
 .btn {
     display: block;
     font-size: rem(12px);
-    line-height: rem(33px);
+    line-height: rem(31px);
     border-radius: rem(3px);
     border: 0;
     background-color: $color-primary;
     color: $color-white;
-    //padding: rem(4px) rem(10px);
-    height: rem(35px);
+    height: rem(32px);
     padding-left: rem(15px);
     padding-right: rem(15px);
     text-transform: uppercase;
@@ -23,5 +22,6 @@
     &:active,
     &:focus {
         background-color: darken($color-primary, 6%);
+        outline: none;
     }
 }

@@ -60,9 +60,35 @@
                                     <a href="#" class="filter__trigger" data-filter-trigger="importance">Importance</a>
                                 </li>
                             </ul>
+
                             <button class="btn btn-small" data-new-note>+ New Note</button>
-                            <!-- <input type="checkbox" id="show-finished"> <label for="show-finished">Show finished</label> -->
+
+                            <div class="show-next">
+                                <input class="show-next__checkbox" type="checkbox" id="show-finished" data-show-finished>
+                                <label class="show-next__label" for="show-finished">Show finished</label>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                <div class="grid__row">
+                    <div class="grid__col-xs-12">
+                        <ul class="notelist">
+                            <li class="note">
+                                <div class="note__action">
+                                    <input type="checkbox" data-finish-note="{{id}}">
+                                </div>
+                                <div class="note__content">
+                                    <p class="note__title">Explore the street art of East London</p>
+                                    <p class="note__description">
+                                        Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
+                                    </p>
+                                </div>
+                                <div class="note__meta">
+                                    {{ importance }}
+                                    {{ edit link }}
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>

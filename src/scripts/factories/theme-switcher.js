@@ -1,23 +1,37 @@
-// ThemeSwitcher factory
-// TODO: documentation
-export default (options) => {
-    const self = {};
-    const settings = Object.assign({}, {
-        active: 0,
-        options: ['theme-light', 'theme-dark']
-    }, options);
+// Theme Switcher Factory
+export const createThemeSwitcher = (container) => {
+    const options = ['light', 'dark'];
 
-    /*
-     * TODO: documentation
+    /**
+     * Set active theme
+     *
+     * @param {String} theme to switch to
      */
-    self.toggleTheme = () => {
-        settings.active = settings.active === 1 ? 0 : 1;
-        document.body.classList.toggle(settings.options[0], settings.active === 0);
-        document.body.classList.toggle(settings.options[1], settings.active === 1);
+    const setTheme = (theme) => {
+        document.body.classList.toggle(options[0], options[0] === theme);
+        document.body.classList.toggle(options[1], options[1] === theme);
+
+        triggers.forEach((trigger) => {
+            trigger.classList.toggle('is-active', trigger.getAttribute('data-switch-trigger') === theme);
+        });
     };
 
-    // Initiation logic
-    document.body.classList.toggle(settings.options[settings.active], true);
+    // Glob triggers
+    const triggers = container.querySelectorAll('[data-switch-trigger]');
 
-    return self;
+    // Attach event listeners
+    triggers.forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
+            event.preventDefault();
+            setTheme(trigger.getAttribute('data-switch-trigger'));
+        });
+    });
+
+    // Set option1 as default theme at pageload
+    setTheme(options[0]);
+
+    // Some serious exposing happens here
+    return {
+        setTheme
+    };
 };

@@ -3,6 +3,9 @@
    ======================= */
 
 .action-bar {
+
+    --spacer: rem(32px);
+
     border-bottom: 1px solid $color-grey;
     overflow: hidden;
 
@@ -10,7 +13,16 @@
         float: left;
     }
 
-    .btn {
+    .btn,
+    .show-next {
         float: right;
+    }
+
+    .btn {
+        margin-top: rem(3px);
+    }
+
+    .show-next {
+        margin-right: var(--spacer);
     }
 }

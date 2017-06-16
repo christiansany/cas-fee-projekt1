@@ -9,7 +9,7 @@
 
     &__item {
         display: inline-block;
-        margin-right: rem(32px);
+        margin-right: var(--spacer);
     }
 
     &__label,
