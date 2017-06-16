@@ -9,7 +9,6 @@ html {
 }
 
 body {
-
     --main-bg-color: $color-white;
     --font-color: $color-black;
     --color-primary: $color-primary;
@@ -22,10 +21,10 @@ body {
     -moz-osx-font-smoothing: grayscale;
     color: var(--font-color);
     background-color: var(--main-bg-color);
-    transition: background-color .22s ease-in-out, color .22s ease-in-out;
+    transition: background-color .22s ease-in-out;
 
     &.dark {
-        --main-bg-color: black;
+        --main-bg-color: $color-black;
         --font-color: $color-white;
     }
 }
