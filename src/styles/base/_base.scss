@@ -11,8 +11,12 @@ html {
 body {
     --main-bg-color: $color-white;
     --font-color: $color-black;
-    --color-primary: $color-primary;
-    --color-secondary: $color-secondary;
+    --font-color-light: $color-offblack;
+    --color-borders: $color-grey;
+
+    --color-primary: $color-primary-light;
+    --color-primary-darken: darken($color-primary-light, 6%);
+    --color-secondary: $color-secondary-light;
 
     font-size: 100%;
     font-family: $font-family-primary;
@@ -26,6 +30,12 @@ body {
     &.dark {
         --main-bg-color: $color-black;
         --font-color: $color-white;
+        --font-color-light: $color-light-grey;
+        --color-borders: $color-offblack;
+
+        --color-primary: $color-primary-dark;
+        --color-primary-darken: darken($color-primary-dark, 6%);
+        --color-secondary: $color-secondary-dark;
     }
 }
 

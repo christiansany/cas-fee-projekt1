@@ -45,6 +45,7 @@
 
     &:after {
         content: " ";
+        pointer-events: none;
         position: absolute;
         bottom: rem(-8px);
         transform: translateY(#{rem(10px)});
@@ -56,7 +57,7 @@
     }
 
     &.is-dark {
-        background-color: #282828;
+        background-color: $color-black;
     }
 
     &.is-light {
@@ -64,12 +65,9 @@
     }
 
     &.is-active {
-        //border: 2px solid $color-primary;
-
         &:after {
             transform: translateY(0);
-            //bottom: -8px;
-            background-color: $color-secondary;
+            background-color: var(--color-secondary);
         }
     }
 }

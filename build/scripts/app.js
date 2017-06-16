@@ -61,24 +61,28 @@
 	
 	__webpack_require__(5);
 	
-	var _observer = __webpack_require__(6);
-	
-	var _observer2 = _interopRequireDefault(_observer);
-	
-	var _app = __webpack_require__(7);
+	var _app = __webpack_require__(6);
 	
 	var _app2 = _interopRequireDefault(_app);
 	
-	var _themeSwitcher = __webpack_require__(27);
+	var _themeSwitcher = __webpack_require__(26);
 	
-	var _sorter = __webpack_require__(28);
+	var _sorter = __webpack_require__(27);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// TODO: Remove unused when finishind app
-	
+	// Instanciate themeSwitcher
+	(0, _themeSwitcher.createThemeSwitcher)(document.querySelector('[data-theme-switcher]'));
 	
 	// Dependencies
+	// import observer from './libs/observer';
+	// import themeSwitcher from './factories/theme-switcher';
+	// import pubsub from './helpers/pubsub';
+	// import handlebars from 'handlebars';
+	// import handlebars from 'handlebars';
+	// import render from './composites/render';
+	// import { view } from './composites/mvc';
+	// const Handlebars = require('handlebars');
 	/**
 	 * @file
 	 * Main entry point of the todo manager app
@@ -87,31 +91,28 @@
 	 */
 	
 	// Import polyfills
-	var themeSwitcher = (0, _themeSwitcher.createThemeSwitcher)(document.querySelector('[data-theme-switcher]'));
-	// import themeSwitcher from './factories/theme-switcher';
-	// import pubsub from './helpers/pubsub';
-	// import handlebars from 'handlebars';
-	// import handlebars from 'handlebars';
-	// import render from './composites/render';
-	// import { view } from './composites/mvc';
-	// const Handlebars = require('handlebars');
+	
 	
 	var sorter = (0, _sorter.createSorter)(document.querySelector('[data-filter]'));
 	
 	sorter.on('sortChange', function (sort) {
-	    console.log(sort);
+	    console.log('Sort Notes by:', sort);
 	});
 	
 	var showFinishedTrigger = document.querySelector('[data-show-finished]');
-	
 	showFinishedTrigger.addEventListener('change', function (event) {
 	    console.log(event.target.checked);
+	});
+	
+	var newNoteTrigger = document.querySelector('[data-new-note]');
+	newNoteTrigger.addEventListener('click', function () {
+	    console.log('I want to create a new Note');
 	});
 	
 	// Notelist Factory
 	var createNoteList = function createNoteList(container) {};
 	
-	var notelist = createNoteList;
+	var notelist = createNoteList(document.querySelector('[data-notelist]'));
 	
 	// const themeSwitcher = document.querySelectorAll()
 	
@@ -221,165 +222,26 @@
 
 /***/ }),
 /* 6 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	/**
-	 * This module implements an observer pattern.
-	 * It can be used to extend the functionality of a module.
-	 *
-	 * @example
-	 * import observer from 'composites/observer';
-	 *
-	 * export default () => {
-	 *  let instance = {};
-	 *  ...
-	 *  ...
-	 *  instance = Object.assign({}, instance, observer());
-	 * }
-	 *
-	 * @author christian.sany@notch-interactive.com, diego.morales@notch-interactive.com
-	 *
-	 * @module composites/observer
-	 */
-	
-	/**
-	 * There's no need to pass the instance of the parent module to this composite.
-	 * @static
-	 * @function factory
-	 * @returns {object} Observer instance
-	 */
-	exports.default = function () {
-	
-	    var uid = -1,
-	        events = {},
-	
-	
-	    /**
-	     * Subscribes to an Event.
-	     *
-	     * @param {string} event - Name of the event.
-	     * @param {function} listener - Callback function.
-	     * @param {boolean} once - If true, removes a listener after first execution
-	     * @returns {number} Returns an id for this subscription.
-	     */
-	    on = function on(event, listener, once) {
-	        uid++;
-	
-	        once = once || false;
-	
-	        if (!events[event]) {
-	            events[event] = { queue: [] };
-	        }
-	
-	        events[event].queue.push({
-	            uid: uid,
-	            listener: listener,
-	            once: once
-	        });
-	
-	        return uid;
-	    },
-	
-	
-	    /**
-	     * Unsubscribes an Event.
-	     * If an event name is passed, all listeners to this event will be removed.
-	     *
-	     * @param {string|number} event - Can be id of subscription or event name.
-	     * @returns {string|number} Returns the removed id or event name. -1 will be returned if nothing was removed.
-	     */
-	    off = function off(event) {
-	        if (typeof event === 'number') {
-	            for (var e in events) {
-	                if (events.hasOwnProperty(e)) {
-	                    for (var i = events[e].queue.length; i--;) {
-	                        if (events[e].queue[i].uid === event) {
-	                            events[e].queue.splice(i, 1);
-	
-	                            if (!events[e].queue.length) {
-	                                delete events[e];
-	                            }
-	
-	                            return event;
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	
-	        if (typeof event === 'string') {
-	            delete events[event];
-	            return event;
-	        }
-	
-	        return -1;
-	    },
-	
-	
-	    /**
-	     * Triggers all listeners of event.
-	     *
-	     * @param {string} event - Name of Event
-	     * @param {object} data - Data which will be passed to listeners. Can actually also be string, number or array. The listener should simply be able to handle the passed data.
-	     */
-	    trigger = function trigger(event) {
-	        if (!events[event] || !events[event].queue.length) {
-	            return;
-	        }
-	
-	        var data = [].concat(Array.prototype.slice.call(arguments)).slice(1);
-	
-	        // Create copy, in case the queue gets mutated inside a callback
-	        var eventQueue = events[event].queue.slice(0);
-	
-	        // Cycle through topics queue, fire!
-	        eventQueue.forEach(function (item) {
-	            item.listener.apply(item, _toConsumableArray(data)); // ES5 compliant: item.listener.apply(null, data);
-	            if (item.once) {
-	
-	                // Unsubscribe
-	                off(item.uid);
-	            }
-	        });
-	    };
-	
-	    return {
-	        on: on,
-	        off: off,
-	        trigger: trigger
-	    };
-	};
-
-/***/ }),
-/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(8);
+	var Handlebars = __webpack_require__(7);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
 	    return "<div class=\"metabar\">\n    <div class=\"grid__container\">\n        <div class=\"grid__row\">\n            <div class=\"grid__col-xs-12\">\n                <div class=\"theme-switcher\">\n                    <span class=\"theme-switcher__label\">Theme</span>\n\n                    <ul class=\"theme-switcher__list\">\n                        <li class=\"theme-switcher__item\">\n                            <a class=\"theme-switcher__trigger is-dark\" href=\"#\" title=\"Dark\" data-theme=\"dark\" data-theme-switcher></a>\n                        </li>\n                        <li class=\"theme-switcher__item\">\n                            <a class=\"theme-switcher__trigger is-light\" href=\"#\" title=\"Light\" data-theme=\"light\" data-theme-switcher></a>\n                        </li>\n                    </ul>\n                </div>\n            </div>\n        </div>\n    </div>\n</div>\n";
 	},"useData":true});
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(9)['default'];
+	module.exports = __webpack_require__(8)['default'];
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -405,30 +267,30 @@
 	  }
 	}
 	
-	var _handlebarsBase = __webpack_require__(10);
+	var _handlebarsBase = __webpack_require__(9);
 	
 	var base = _interopRequireWildcard(_handlebarsBase);
 	
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
 	
-	var _handlebarsSafeString = __webpack_require__(24);
+	var _handlebarsSafeString = __webpack_require__(23);
 	
 	var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 	
-	var _handlebarsException = __webpack_require__(12);
+	var _handlebarsException = __webpack_require__(11);
 	
 	var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 	
-	var _handlebarsUtils = __webpack_require__(11);
+	var _handlebarsUtils = __webpack_require__(10);
 	
 	var Utils = _interopRequireWildcard(_handlebarsUtils);
 	
-	var _handlebarsRuntime = __webpack_require__(25);
+	var _handlebarsRuntime = __webpack_require__(24);
 	
 	var runtime = _interopRequireWildcard(_handlebarsRuntime);
 	
-	var _handlebarsNoConflict = __webpack_require__(26);
+	var _handlebarsNoConflict = __webpack_require__(25);
 	
 	var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 	
@@ -461,7 +323,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -474,17 +336,17 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
-	var _exception = __webpack_require__(12);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
-	var _helpers = __webpack_require__(13);
+	var _helpers = __webpack_require__(12);
 	
-	var _decorators = __webpack_require__(21);
+	var _decorators = __webpack_require__(20);
 	
-	var _logger = __webpack_require__(23);
+	var _logger = __webpack_require__(22);
 	
 	var _logger2 = _interopRequireDefault(_logger);
 	
@@ -571,7 +433,7 @@
 	exports.logger = _logger2['default'];
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -701,7 +563,7 @@
 	}
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -759,7 +621,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -772,31 +634,31 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _helpersBlockHelperMissing = __webpack_require__(14);
+	var _helpersBlockHelperMissing = __webpack_require__(13);
 	
 	var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 	
-	var _helpersEach = __webpack_require__(15);
+	var _helpersEach = __webpack_require__(14);
 	
 	var _helpersEach2 = _interopRequireDefault(_helpersEach);
 	
-	var _helpersHelperMissing = __webpack_require__(16);
+	var _helpersHelperMissing = __webpack_require__(15);
 	
 	var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 	
-	var _helpersIf = __webpack_require__(17);
+	var _helpersIf = __webpack_require__(16);
 	
 	var _helpersIf2 = _interopRequireDefault(_helpersIf);
 	
-	var _helpersLog = __webpack_require__(18);
+	var _helpersLog = __webpack_require__(17);
 	
 	var _helpersLog2 = _interopRequireDefault(_helpersLog);
 	
-	var _helpersLookup = __webpack_require__(19);
+	var _helpersLookup = __webpack_require__(18);
 	
 	var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 	
-	var _helpersWith = __webpack_require__(20);
+	var _helpersWith = __webpack_require__(19);
 	
 	var _helpersWith2 = _interopRequireDefault(_helpersWith);
 	
@@ -811,14 +673,14 @@
 	}
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('blockHelperMissing', function (context, options) {
@@ -854,7 +716,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -868,9 +730,9 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
-	var _exception = __webpack_require__(12);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
@@ -956,7 +818,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -968,7 +830,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _exception = __webpack_require__(12);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
@@ -987,14 +849,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('if', function (conditional, options) {
@@ -1020,7 +882,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1050,7 +912,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1066,14 +928,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('with', function (context, options) {
@@ -1103,7 +965,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1116,7 +978,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _decoratorsInline = __webpack_require__(22);
+	var _decoratorsInline = __webpack_require__(21);
 	
 	var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 	
@@ -1125,14 +987,14 @@
 	}
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
 	exports['default'] = function (instance) {
 	  instance.registerDecorator('inline', function (fn, props, container, options) {
@@ -1158,14 +1020,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
 	var logger = {
 	  methodMap: ['debug', 'info', 'warn', 'error'],
@@ -1209,7 +1071,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports) {
 
 	// Build out our basic SafeString type
@@ -1228,7 +1090,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1262,15 +1124,15 @@
 	  }
 	}
 	
-	var _utils = __webpack_require__(11);
+	var _utils = __webpack_require__(10);
 	
 	var Utils = _interopRequireWildcard(_utils);
 	
-	var _exception = __webpack_require__(12);
+	var _exception = __webpack_require__(11);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
-	var _base = __webpack_require__(10);
+	var _base = __webpack_require__(9);
 	
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
@@ -1553,7 +1415,7 @@
 	}
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
@@ -1578,7 +1440,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1625,7 +1487,7 @@
 	};
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1635,7 +1497,7 @@
 	});
 	exports.createSorter = undefined;
 	
-	var _observer = __webpack_require__(6);
+	var _observer = __webpack_require__(28);
 	
 	var _observer2 = _interopRequireDefault(_observer);
 	
@@ -1663,6 +1525,145 @@
 	
 	    // Some serious exposing happens here
 	    return instance;
+	};
+
+/***/ }),
+/* 28 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	/**
+	 * This module implements an observer pattern.
+	 * It can be used to extend the functionality of a module.
+	 *
+	 * @example
+	 * import observer from 'composites/observer';
+	 *
+	 * export default () => {
+	 *  let instance = {};
+	 *  ...
+	 *  ...
+	 *  instance = Object.assign({}, instance, observer());
+	 * }
+	 *
+	 * @author christian.sany@notch-interactive.com, diego.morales@notch-interactive.com
+	 *
+	 * @module composites/observer
+	 */
+	
+	/**
+	 * There's no need to pass the instance of the parent module to this composite.
+	 * @static
+	 * @function factory
+	 * @returns {object} Observer instance
+	 */
+	exports.default = function () {
+	
+	    var uid = -1,
+	        events = {},
+	
+	
+	    /**
+	     * Subscribes to an Event.
+	     *
+	     * @param {string} event - Name of the event.
+	     * @param {function} listener - Callback function.
+	     * @param {boolean} once - If true, removes a listener after first execution
+	     * @returns {number} Returns an id for this subscription.
+	     */
+	    on = function on(event, listener, once) {
+	        uid++;
+	
+	        once = once || false;
+	
+	        if (!events[event]) {
+	            events[event] = { queue: [] };
+	        }
+	
+	        events[event].queue.push({
+	            uid: uid,
+	            listener: listener,
+	            once: once
+	        });
+	
+	        return uid;
+	    },
+	
+	
+	    /**
+	     * Unsubscribes an Event.
+	     * If an event name is passed, all listeners to this event will be removed.
+	     *
+	     * @param {string|number} event - Can be id of subscription or event name.
+	     * @returns {string|number} Returns the removed id or event name. -1 will be returned if nothing was removed.
+	     */
+	    off = function off(event) {
+	        if (typeof event === 'number') {
+	            for (var e in events) {
+	                if (events.hasOwnProperty(e)) {
+	                    for (var i = events[e].queue.length; i--;) {
+	                        if (events[e].queue[i].uid === event) {
+	                            events[e].queue.splice(i, 1);
+	
+	                            if (!events[e].queue.length) {
+	                                delete events[e];
+	                            }
+	
+	                            return event;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	
+	        if (typeof event === 'string') {
+	            delete events[event];
+	            return event;
+	        }
+	
+	        return -1;
+	    },
+	
+	
+	    /**
+	     * Triggers all listeners of event.
+	     *
+	     * @param {string} event - Name of Event
+	     * @param {object} data - Data which will be passed to listeners. Can actually also be string, number or array. The listener should simply be able to handle the passed data.
+	     */
+	    trigger = function trigger(event) {
+	        if (!events[event] || !events[event].queue.length) {
+	            return;
+	        }
+	
+	        var data = [].concat(Array.prototype.slice.call(arguments)).slice(1);
+	
+	        // Create copy, in case the queue gets mutated inside a callback
+	        var eventQueue = events[event].queue.slice(0);
+	
+	        // Cycle through topics queue, fire!
+	        eventQueue.forEach(function (item) {
+	            item.listener.apply(item, _toConsumableArray(data)); // ES5 compliant: item.listener.apply(null, data);
+	            if (item.once) {
+	
+	                // Unsubscribe
+	                off(item.uid);
+	            }
+	        });
+	    };
+	
+	    return {
+	        on: on,
+	        off: off,
+	        trigger: trigger
+	    };
 	};
 
 /***/ })

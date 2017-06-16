@@ -12,7 +12,7 @@ import './polyfills/nodelist-foreach';
 import './polyfills/object-assign';
 
 // Dependencies
-import observer from './libs/observer';
+// import observer from './libs/observer';
 // import themeSwitcher from './factories/theme-switcher';
 // import pubsub from './helpers/pubsub';
 // import handlebars from 'handlebars';
@@ -25,22 +25,24 @@ import template from '../templates/app.hbs';
 import { createThemeSwitcher } from './factories/theme-switcher';
 import { createSorter } from './factories/sorter';
 
+// Instanciate themeSwitcher
+createThemeSwitcher(document.querySelector('[data-theme-switcher]'));
 
-// TODO: Remove unused when finishind app
-const themeSwitcher = createThemeSwitcher(document.querySelector('[data-theme-switcher]'));
 const sorter = createSorter(document.querySelector('[data-filter]'));
 
 sorter.on('sortChange', (sort) => {
-    console.log(sort);
+    console.log('Sort Notes by:', sort);
 });
 
-
 const showFinishedTrigger = document.querySelector('[data-show-finished]');
-
 showFinishedTrigger.addEventListener('change', (event) => {
     console.log(event.target.checked);
 });
 
+const newNoteTrigger = document.querySelector('[data-new-note]');
+newNoteTrigger.addEventListener('click', () => {
+    console.log('I want to create a new Note');
+});
 
 
 
@@ -49,7 +51,7 @@ const createNoteList = (container) => {
 
 };
 
-const notelist = createNoteList
+const notelist = createNoteList(document.querySelector('[data-notelist]'));
 
 // const themeSwitcher = document.querySelectorAll()
 
