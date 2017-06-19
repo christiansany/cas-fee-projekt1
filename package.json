@@ -23,7 +23,8 @@
   },
   "homepage": "https://cas-fee-projekt1.github.io/",
   "dependencies": {
-    "handlebars": "^4.0.8"
+    "handlebars": "^4.0.8",
+    "moment": "^2.18.1"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",

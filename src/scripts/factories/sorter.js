@@ -15,7 +15,8 @@ export const createSorter = (container) => {
     const triggers = container.querySelectorAll('[data-filter-trigger]');
 
     triggers.forEach((trigger) => {
-        trigger.addEventListener('click', () => {
+        trigger.addEventListener('click', (e) => {
+            e.preventDefault();
             setSort(trigger.getAttribute('data-filter-trigger'));
         });
     });

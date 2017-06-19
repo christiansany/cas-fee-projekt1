@@ -1,5 +1,6 @@
 // Dependencies
 import observer from '../libs/observer';
+import Moment from 'moment';
 
 // NoteModel factory
 const NoteModel = () => {
@@ -30,23 +31,28 @@ const NoteModel = () => {
         fetched = true;
     };
 
+    const save = () => {
+        // Save notes to localStorage
+        localStorage.setItem('notes', JSON.stringify(notes));
+    };
+
     // Internal flag
     let fetched = false; // Set to true when initial fetching for the data is finished
 
     let uid = -1;
 
     // Public functions
-    self.add = (note) => {
+    self.add = (data) => {
         // TODO: add checking of object
         // TODO: performe ajax like task (ajax comes later)
 
-        console.log('add', note);
-
         // Creature unique id for note and assign it to the note
         uid++;
-        Object.assign(note, {
-            uid
-        });
+        const note = Object.assign({}, {
+            uid,
+            created: new Moment(),
+            finished: false
+        }, data);
 
         return new Promise((resolve, reject) => {
             try {
@@ -54,8 +60,8 @@ const NoteModel = () => {
                 // Push on notes
                 notes.push(note);
 
-                // Save notes to localStorage
-                localStorage.setItem('notes', JSON.stringify(notes));
+                // Saves current notes to localStorage
+                save();
 
                 // Trigger stream subscribtions
                 ob.trigger('notes', notes, 'added');
@@ -70,17 +76,28 @@ const NoteModel = () => {
         });
     };
 
-    self.update = (uid, note) => {
+    self.update = (uid, data) => {
 
-        console.log('update', note);
+        const note = notes.find(n => n.uid === parseInt(uid));
+
+        console.log(uid, note);
+
+        Object.assign(note, data);
+
+        // Saves current notes to localStorage
+        save();
 
         // Trigger stream subscribtions
         ob.trigger('notes', notes, 'updated');
     };
 
-    self.remove = (uid, note) => {
+    self.remove = (uid) => {
 
-        console.log('remove', note);
+        // Iteration stops at first return of true
+        notes.splice(notes.findIndex(note => note.uid === parseInt(uid)), 1);
+
+        // Saves current notes to localStorage
+        save();
 
         // Trigger stream subscribtions
         ob.trigger('notes', notes, 'removed');

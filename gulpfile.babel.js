@@ -101,7 +101,7 @@ export const watch = gulp.series(() => {
     gulp.watch(stylesPaths.watch, gulp.parallel(buildStyles));
     gulp.watch(scriptsPaths.watch, gulp.parallel(buildScripts));
     gulp.watch(fontsPaths.watch, gulp.parallel(copyFonts));
-    gulp.watch(templatePaths.watch, gulp.parallel(copyTemplates));
+    gulp.watch(templatePaths.watch, gulp.series(copyTemplates, buildScripts));
 });
 
 export default gulp.series(build, watch);

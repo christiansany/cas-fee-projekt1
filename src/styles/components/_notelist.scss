@@ -3,7 +3,9 @@
    ======================= */
 
 .notelist {
-    padding: 0;
-    margin: rem(20px) 0 0;
-    list-style-type: none;
+    &__list {
+        padding: 0;
+        margin: rem(20px) 0 0;
+        list-style-type: none;
+    }
 }

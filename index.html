@@ -72,100 +72,73 @@
                 </div>
                 <div class="grid__row">
                     <div class="grid__col-xs-12">
-                        <ul class="notelist" data-notelist>
-                            <li class="note" data-note="{{ id }}">
-                                <div class="note__action">
-                                    <input class="note__finish-checkbox" type="checkbox" data-finish-note="{{id}}">
-                                </div>
-                                <div class="note__content">
-                                    <p class="note__title">Explore the street art of East London</p>
-                                    <p class="note__description">
-                                        Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
-                                    </p>
-                                </div>
-                                <div class="note__meta">
-                                    <div class="note__importance">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
+                        <div class="notelist" data-notelist>
+                            <ul class="notelist__list" data-notelist-list>
+                                <li class="note is-finished" data-note="{{ id }}">
+                                    <div class="note__action">
+                                        <input class="note__finish-checkbox" type="checkbox" data-finish-note>
                                     </div>
-                                    <div class="note__duedate">
-                                        Due: 20.06.2017
-                                    </div>
-                                    <div class="note__edit-wrapper">
-                                        <a href="#" class="note__edit-link" data-note-edit>
-                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
-                                        </a>
-                                    </div>
-                                </div>
-                            </li>
-
-                            <li class="note is-finished" data-note="{{ id }}">
-                                <div class="note__action">
-                                    <input type="checkbox" data-finish-note="{{id}}">
-                                </div>
-                                <div class="note__content">
-                                    <p class="note__title">Explore the street art of East London</p>
-                                    <p class="note__description">
-                                        Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
-                                    </p>
-                                    <span class="note__finishdate">
+                                    <div class="note__content">
+                                        <p class="note__title">Explore the street art of East London</p>
+                                        <p class="note__description">
+                                            Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
+                                        </p>
+                                        <span class="note__finishdate">
                                         Finished: 21.06.2017
                                     </span>
-                                </div>
-                                <div class="note__meta">
-                                    <div class="note__importance">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
                                     </div>
-                                    <div class="note__duedate">
-                                        Due: 20.06.2017
+                                    <div class="note__meta">
+                                        <div class="note__importance">
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                        </div>
+                                        <div class="note__duedate">
+                                            Due: 20.06.2017
+                                        </div>
+                                        <div class="note__edit-wrapper">
+                                            <a href="#" class="note__edit-link" data-note-edit>
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="note__edit-wrapper">
-                                        <a href="#" class="note__edit-link" data-note-edit>
-                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
-                                        </a>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
 
-                            <li class="note" data-note="{{ id }}">
-                                <div class="note__action">
-                                    <input type="checkbox" data-finish-note="{{id}}">
-                                </div>
-                                <div class="note__content">
-                                    <p class="note__title">Explore the street art of East London</p>
-                                    <p class="note__description">
-                                        Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
-                                    </p>
-                                    <span class="note__finishdate">
+                                <li class="note" data-note="{{ id }}">
+                                    <div class="note__action">
+                                        <input class="note__finish-checkbox" type="checkbox">
+                                    </div>
+                                    <div class="note__content">
+                                        <p class="note__title">Explore the street art of East London</p>
+                                        <p class="note__description">
+                                            Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
+                                        </p>
+                                        <span class="note__finishdate">
                                         Finished: 21.06.2017
                                     </span>
-                                </div>
-                                <div class="note__meta">
-                                    <div class="note__importance">
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
-                                        <i class="fa fa-star" aria-hidden="true"></i>
                                     </div>
-                                    <div class="note__duedate">
-                                        Due: 20.06.2017
+                                    <div class="note__meta">
+                                        <div class="note__importance">
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                            <i class="fa fa-star" aria-hidden="true"></i>
+                                        </div>
+                                        <div class="note__duedate">
+                                            Due: 20.06.2017
+                                        </div>
+                                        <div class="note__edit-wrapper">
+                                            <a href="#" class="note__edit-link" data-note-edit>
+                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="note__edit-wrapper">
-                                        <a href="#" class="note__edit-link" data-note-edit>
-                                            <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
-                                        </a>
-                                    </div>
-                                </div>
-                            </li>
-                        </ul>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>

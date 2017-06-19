@@ -50,16 +50,17 @@
         margin: 0;
     }
 
-    &__finishdate {
-        position: absolute;
-        bottom: -20px;
-        font-size: rem(12px);
-        font-weight: 300;
-        opacity: 0;
-        transition: opacity .22s ease-in-out;
-    }
+    //&__finishdate {
+    //    position: absolute;
+    //    bottom: -20px;
+    //    font-size: rem(12px);
+    //    font-weight: 300;
+    //    opacity: 0;
+    //    transition: opacity .22s ease-in-out;
+    //}
 
-    &__edit-link {
+    &__edit-link,
+    &__delete-link {
         position: relative;
         font-size: rem(12px);
         font-weight: 500;
@@ -93,10 +94,10 @@
     }
 
     &.is-finished {
-        padding-bottom: rem(40px);
-
-        .note__finishdate {
-            opacity: 1;
-        }
+        //padding-bottom: rem(40px);
+        //
+        //.note__finishdate {
+        //    opacity: 1;
+        //}
     }
 }
