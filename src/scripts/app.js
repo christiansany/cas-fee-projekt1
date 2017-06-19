@@ -1,15 +1,11 @@
 /**
- * @file
- * Main entry point of the todo manager app
+ * @file Main entry point of Noter, the notesapp to stay organized
  *
  * @author christian.sany@notch-interactive.com
  */
 
 // Import polyfills
-import './polyfills/element-matches';
-import './polyfills/element-closest';
-import './polyfills/nodelist-foreach';
-import './polyfills/object-assign';
+// No polyfills will be used, since this Project doesn't have to support older Browsers
 
 // Dependencies
 import observer from './libs/observer';
@@ -21,8 +17,11 @@ import Moment from 'moment';
 // import render from './composites/render';
 // import { view } from './composites/mvc';
 // const Handlebars = require('handlebars');
+
+// Tempaltes -> Are getting laoded via handlebars-loader
 import noteTemplate from '../templates/note.hbs';
 
+// Components
 import { createThemeSwitcher } from './factories/theme-switcher';
 import { createSorter } from './factories/sorter';
 
