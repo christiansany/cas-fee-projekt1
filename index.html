@@ -3,145 +3,152 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title>ToDo Manager</title>
+        <title>Noter</title>
         <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
         <!-- TODO: Place favicon.ico in the root directory -->
 
         <link rel="stylesheet" href="./build/styles/main.css">
     </head>
     <body>
+        <div class="grid__container">
+            <div class="grid__row">
+                <div class="grid__col-xs-12">
+                    <div class="theme-switcher" data-theme-switcher>
+                        <span class="theme-switcher__label">Theme</span>
 
-        <header>
-            <div class="grid__container">
-                <div class="grid__row">
-                    <div class="grid__col-xs-12">
-                        <div class="theme-switcher" data-theme-switcher>
-                            <span class="theme-switcher__label">Theme</span>
-
-                            <ul class="theme-switcher__list">
-                                <li class="theme-switcher__item">
-                                    <a class="theme-switcher__trigger is-light is-active" href="#" title="Light" data-switch-trigger="light"></a>
-                                </li>
-                                <li class="theme-switcher__item">
-                                    <a class="theme-switcher__trigger is-dark" href="#" title="Dark" data-switch-trigger="dark"></a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="grid__row">
-                    <div class="grid__col-xs-12">
-                        <h1 class="pagetitle">
-                            <span class="pagetitle__highlight">Noter</span> Get organised using the best notesapp there is.
-                        </h1>
+                        <ul class="theme-switcher__list">
+                            <li class="theme-switcher__item">
+                                <a class="theme-switcher__trigger is-light is-active" href="#" title="Light" data-switch-trigger="light"></a>
+                            </li>
+                            <li class="theme-switcher__item">
+                                <a class="theme-switcher__trigger is-dark" href="#" title="Dark" data-switch-trigger="dark"></a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </header>
-        <div class="content">
-            <div class="grid__container">
-                <div class="grid__row">
-                    <div class="grid__col-xs-12">
+        </div>
 
-                        <div class="action-bar">
-                            <ul class="filter" data-filter>
-                                <li class="filter__item">
-                                    <span class="filter__label">Sort by</span>
-                                </li>
-                                <li class="filter__item">
-                                    <a href="#" class="filter__trigger is-active" data-filter-trigger="finishdate">Finishdate</a>
-                                </li>
-                                <li class="filter__item">
-                                    <a href="#" class="filter__trigger" data-filter-trigger="creationdate">Creationdate</a>
-                                </li>
-                                <li class="filter__item">
-                                    <a href="#" class="filter__trigger" data-filter-trigger="importance">Importance</a>
-                                </li>
-                            </ul>
+        <div data-router-outlet>
+            <section class="section is-active" data-route="/list">
+                <header>
+                    <div class="grid__container">
+                        <div class="grid__row">
+                            <div class="grid__col-xs-12">
+                                <p class="pagetitle">
+                                    <span class="pagetitle__highlight">Noter</span> Get organised using the best notesapp there is.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content">
+                    <div class="grid__container">
+                        <div class="grid__row">
+                            <div class="grid__col-xs-12">
 
-                            <button class="btn btn-small" data-new-note>+ New Note</button>
+                                <div class="action-bar">
+                                    <ul class="filter" data-filter>
+                                        <li class="filter__item">
+                                            <span class="filter__label">Sort by</span>
+                                        </li>
+                                        <li class="filter__item">
+                                            <a href="#" class="filter__trigger is-active" data-filter-trigger="duedate">Duedate</a>
+                                        </li>
+                                        <li class="filter__item">
+                                            <a href="#" class="filter__trigger" data-filter-trigger="creationdate">Creationdate</a>
+                                        </li>
+                                        <li class="filter__item">
+                                            <a href="#" class="filter__trigger" data-filter-trigger="importance">Importance</a>
+                                        </li>
+                                    </ul>
 
-                            <div class="show-next">
-                                <input class="show-next__checkbox" type="checkbox" id="show-finished" data-show-finished>
-                                <label class="show-next__label" for="show-finished">Show finished</label>
+                                    <button class="btn btn-small" data-new-note>+ New Note</button>
+
+                                    <div class="show-next">
+                                        <input class="show-next__checkbox" type="checkbox" id="show-finished" data-show-finished>
+                                        <label class="show-next__label" for="show-finished">Show finished</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid__row">
+                            <div class="grid__col-xs-12">
+                                <div class="notelist" data-notelist>
+                                    <ul class="notelist__list" data-notelist-list>
+                                        <!-- Notes will be rendered here from the handlebars template -->
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="grid__row">
-                    <div class="grid__col-xs-12">
-                        <div class="notelist" data-notelist>
-                            <ul class="notelist__list" data-notelist-list>
-                                <li class="note is-finished" data-note="{{ id }}">
-                                    <div class="note__action">
-                                        <input class="note__finish-checkbox" type="checkbox" data-finish-note>
-                                    </div>
-                                    <div class="note__content">
-                                        <p class="note__title">Explore the street art of East London</p>
-                                        <p class="note__description">
-                                            Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
-                                        </p>
-                                        <span class="note__finishdate">
-                                        Finished: 21.06.2017
-                                    </span>
-                                    </div>
-                                    <div class="note__meta">
-                                        <div class="note__importance">
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="note__duedate">
-                                            Due: 20.06.2017
-                                        </div>
-                                        <div class="note__edit-wrapper">
-                                            <a href="#" class="note__edit-link" data-note-edit>
-                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
-                                            </a>
-                                        </div>
-                                    </div>
-                                </li>
+            </section>
 
-                                <li class="note" data-note="{{ id }}">
-                                    <div class="note__action">
-                                        <input class="note__finish-checkbox" type="checkbox">
+            <section class="section" data-route="/new-edit">
+                <header>
+                    <div class="grid__container">
+                        <div class="grid__row">
+                            <div class="grid__col-xs-12">
+                                <p class="pagetitle">
+                                    <span class="pagetitle__highlight">New Note</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <div class="content">
+                    <div class="grid__container">
+                        <div class="grid__row">
+                            <div class="grid__col-xs-12">
+                                <form action="/" method="post" data-form>
+                                    <input type="hidden" name="uid" id="uid" data-form-uid>
+
+                                    <div class="formrow">
+                                        <label for="title">Title *</label>
+                                        <input type="text" name="title" id="title" required data-form-title>
                                     </div>
-                                    <div class="note__content">
-                                        <p class="note__title">Explore the street art of East London</p>
-                                        <p class="note__description">
-                                            Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.
-                                        </p>
-                                        <span class="note__finishdate">
-                                        Finished: 21.06.2017
-                                    </span>
+
+                                    <div class="formrow">
+                                        <label for="description">Description</label>
+                                        <textarea name="description" id="description" cols="30" rows="10" data-form-description></textarea>
                                     </div>
-                                    <div class="note__meta">
-                                        <div class="note__importance">
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                            <i class="fa fa-star" aria-hidden="true"></i>
-                                        </div>
-                                        <div class="note__duedate">
-                                            Due: 20.06.2017
-                                        </div>
-                                        <div class="note__edit-wrapper">
-                                            <a href="#" class="note__edit-link" data-note-edit>
-                                                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
-                                            </a>
+
+                                    <div class="grid__row">
+                                        <div class="grid__col-xs-6">
+                                            <div class="formrow">
+                                                <label for="importance">Importance</label>
+                                                <select name="importance" id="importance" data-form-importance>
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </li>
-                            </ul>
+
+                                    <div class="grid__row">
+                                        <div class="grid__col-xs-6">
+                                            <div class="formrow">
+                                                <label for="due">Duedate</label>
+                                                <input type="text" name="due" id="due" data-form-due>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="button" data-btn-cancle>Cancle that Note stuff here</button>
+                                    <button type="submit" data-btn-submit>Submiiiit</button>
+
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
 
         <script src="./build/scripts/app.js"></script>

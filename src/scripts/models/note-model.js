@@ -80,8 +80,6 @@ const NoteModel = () => {
 
         const note = notes.find(n => n.uid === parseInt(uid));
 
-        console.log(uid, note);
-
         Object.assign(note, data);
 
         // Saves current notes to localStorage

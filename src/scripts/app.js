@@ -25,6 +25,12 @@ import noteTemplate from '../templates/note.hbs';
 import { createThemeSwitcher } from './factories/theme-switcher';
 import { createSorter } from './factories/sorter';
 
+// TODO: This controller should not have a copy of the notes
+
+const state = {
+    notes: []
+};
+
 // class Note {
 //     constructor(data) {
 //         this.title = data.title;
@@ -51,8 +57,128 @@ showFinishedTrigger.addEventListener('change', (event) => {
 
 const newNoteTrigger = document.querySelector('[data-new-note]');
 newNoteTrigger.addEventListener('click', () => {
-    console.log('I want to create a new Note');
+    router.push('/new-edit');
 });
+
+
+
+
+
+const createRouter = (container) => {
+    const instance = Object.assign({}, observer());
+
+    const views = container.querySelectorAll('[data-route]');
+
+    instance.push = (viewName) => {
+        views.forEach((view) => {
+            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
+        });
+
+        // Doesn't work with browserify
+        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
+    };
+
+    return instance;
+};
+
+const router = createRouter(document.querySelector('[data-router-outlet]'));
+
+window.router = router;
+
+
+
+
+
+
+// import 'pikaday';
+import Pikaday from './libs/pikaday';
+
+const createForm = (container) => {
+    const instance = Object.assign({}, observer());
+
+    // const form = container;
+    // const cancleButton = container.querySelector('[data-btn-cancle]');
+
+    const elements = {
+        form: container,
+        uid: container.querySelector('[data-form-uid]'),
+        title: container.querySelector('[data-form-title]'),
+        description: container.querySelector('[data-form-description]'),
+        importance: container.querySelector('[data-form-importance]'),
+        due: container.querySelector('[data-form-due]'),
+        cancleButton: container.querySelector('[data-btn-cancle]')
+    };
+
+    const picker = new Pikaday({
+        field: elements.due,
+        format: 'DD.MM.YYYY',
+        firstDay: 1,
+        minDate: new Date(),
+        defaultDate: new Date(),
+        setDefaultDate: true
+    });
+
+    // console.log(elements.due, picker);
+
+    instance.populateFields = data => {
+        elements.uid.value = data.uid;
+        elements.title.value = data.title;
+        elements.description.value = data.description;
+        elements.importance.value = data.importance;
+        elements.due.value = data.dueFormated;
+        picker.setMoment(data.due);
+    };
+
+    instance.clear = () => {
+        elements.uid.value = '';
+        elements.title.value = '';
+        elements.description.value = '';
+        elements.importance.value = '';
+        elements.due.value = '';
+        picker.setDate(new Date());
+    };
+
+    elements.form.addEventListener('submit', e => {
+        e.preventDefault();
+        console.log('here comes fieldvalidation');
+    });
+
+    elements.cancleButton.addEventListener('click', () => {
+        instance.trigger('cancle');
+    });
+
+    return instance;
+};
+
+const form = createForm(document.querySelector('[data-form]'));
+
+
+// Subscribe to cancle
+form.on('cancle', () => {
+
+    // Clear the form
+    form.clear();
+
+    // Route back to the list view
+    router.push('/list');
+});
+
+form.on('submit', (data) => {
+
+    console.log('submit got triggered and validation was ok', data);
+
+    // Clear the form
+    form.clear();
+
+    // Route back to the list view
+    router.push('/list');
+});
+
+
+
+
+
+
 
 
 // Notelist Factory
@@ -109,7 +235,10 @@ notelist.on('unfinish', uid => {
 });
 
 notelist.on('edit', uid => {
-    console.log('Switch to edit mask with ID', uid);
+
+    // Populate form fields with Notedata
+    form.populateFields(state.notes.find(n => n.uid === parseInt(uid)));
+    router.push('/new-edit');
 });
 
 notelist.on('delete', uid => {
@@ -123,7 +252,8 @@ window.model = Model;
 
 // Callback wil be called, every time the notes get mutated
 Model.stream('notes', notes => {
-    notelist.renderNotes(notes);
+    state.notes = notes;
+    notelist.renderNotes(state.notes);
 });
 
 

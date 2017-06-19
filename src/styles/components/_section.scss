@@ -1,0 +1,11 @@
+/* ==|====================
+   Component / Section
+   ======================= */
+
+.section {
+    display: none;
+
+    &.is-active {
+        display: block;
+    }
+}
