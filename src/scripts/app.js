@@ -5,9 +5,10 @@
  */
 
 // TODO: 0 notes view
-// TODO: save theme in localstorage for continued visits
 // TODO: defer laoding the fonts for faster first paint
 // TODO: Change title on edit page according for edit mode or new note mode
+// TODO: Add favicon
+// TODO: Add documentation in readme file on how to set up this project
 
 // Dependencies
 // import observer from './libs/observer';
@@ -26,12 +27,12 @@ Handlebars.registerHelper('times', (n, block) => {
 import Notes from './models/note-model';
 
 // Views
+import { createRouter } from './factories/router';
 import { createThemeSwitcher } from './factories/theme-switcher';
 import { createSorter } from './factories/sorter';
 import { createFilter } from './factories/filter';
-import { createForm } from './factories/form';
-import { createRouter } from './factories/router';
 import { createNoteList } from './factories/note-list';
+import { createForm } from './factories/form';
 
 // Instanciate Viewmodels
 const router = createRouter(document.querySelector('[data-router-outlet]'));
@@ -63,10 +64,30 @@ const stateChanged = () => {
     noteList.renderNotes(notes);
 };
 
-// Subscribe to all kinds of changes who shoud mutate the list view
-sorter.on('changed', stateChanged);
-filter.on('changed', stateChanged);
-Notes.stream('notes', stateChanged);
+// Load sort from last visit (if visited before)
+const sort = localStorage.getItem('sort');
+if(sort) {
+    sorter.setSort(sort);
+}
+
+sorter.on('changed', sort => {
+    localStorage.setItem('sort', sort); // Save sort to localStorage
+    stateChanged(); // Rerenders NoteList
+});
+
+// Load activeFilter from last visit (if visited before)
+const activeFilter = localStorage.getItem('activeFilter');
+if(activeFilter) {
+    filter.setFilter(JSON.parse(activeFilter)); // JSON.parse converts the string to an actual boolean
+}
+
+filter.on('changed', activeFilter => {
+    localStorage.setItem('activeFilter', activeFilter); // Save activeFilter to localStorage
+    stateChanged(); // Rerenders NoteList
+});
+
+// filter.on('changed', stateChanged);
+Notes.stream('notes', stateChanged); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
 
 
 
@@ -79,24 +100,32 @@ Notes.stream('notes', stateChanged);
 const newNoteTrigger = document.querySelector('[data-new-note]');
 newNoteTrigger.addEventListener('click', e => {
     e.preventDefault();
+
+    document.querySelector('[data-edit-new-title]').innerHTML = 'New Note';
+
     router.push('/new-edit');
 });
 
+// Load theme from last visit (if visited before)
+const theme = localStorage.getItem('theme');
+if(theme) {
+    themeSwitcher.setTheme(theme);
+}
 
+// Save the current theme to localstorage
+themeSwitcher.on('changed', theme => {
+    localStorage.setItem('theme', theme);
+});
 
 
 
 // Subscribe to cancle
 form.on('cancle', () => {
-
-    // Clear the form
-    form.clear();
-
-    // Route back to the list view
-    router.push('/list');
+    form.clear(); // Clear the form
+    router.push('/list'); // Route back to the list view
 });
 
-form.on('submit', (data) => {
+form.on('submit', data => {
 
     // Check if an edit was made, or a new Note should be generated
     if(data.hasOwnProperty('uid') && data.uid !== '') {
@@ -105,11 +134,8 @@ form.on('submit', (data) => {
         Notes.addNote(data);
     }
 
-    // Clear the form
-    form.clear();
-
-    // Route back to the list view
-    router.push('/list');
+    form.clear(); // Clear the form
+    router.push('/list'); // Route back to the list view
 });
 
 
@@ -138,12 +164,13 @@ noteList.on('edit', uid => {
 
     // Populate form fields with Notedata
     form.populateFields(Notes.notes.find(n => n.uid === uid));
+
+    document.querySelector('[data-edit-new-title]').innerHTML = 'Edit Note';
+
     router.push('/new-edit');
 });
 
-noteList.on('delete', uid => {
-    Notes.removeNote(uid);
-});
+noteList.on('delete', Notes.removeNote);
 
 
 

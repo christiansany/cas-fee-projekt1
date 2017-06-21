@@ -1,4 +1,4 @@
-export const createRouter = (container) => {
+export const createRouter = container => {
     const instance = Object.assign({});
 
     const views = container.querySelectorAll('[data-route]');

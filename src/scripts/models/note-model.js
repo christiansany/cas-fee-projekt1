@@ -1,6 +1,6 @@
 // Dependencies
 import observer from '../libs/observer';
-import Moment from 'moment';
+// import Moment from 'moment';
 import { Note } from './note';
 
 // NoteModel factory
@@ -106,7 +106,6 @@ const NoteModel = () => {
      *
      * @param {String} content to stream ('notes', 'noteById')
      * @param {Function} callback to call
-     *
      */
     self.stream = (content, callback) => {
 

@@ -1,13 +1,13 @@
 import observer from '../libs/observer';
 
 // Sorter Factory
-export const createSorter = (container) => {
+export const createSorter = container => {
     const instance = Object.assign({}, observer()); // Object composition
     const state = {
         sort: ''
     };
 
-    const setSort = (sort) => {
+    instance.setSort = (sort) => {
         state.sort = sort;
 
         triggers.forEach((trigger) => {
@@ -21,17 +21,18 @@ export const createSorter = (container) => {
     // Expose state.sort
     instance.getSort = () => state.sort;
 
+    // Cache triggers
     const triggers = container.querySelectorAll('[data-filter-trigger]');
 
     triggers.forEach((trigger) => {
         trigger.addEventListener('click', (e) => {
             e.preventDefault();
-            setSort(trigger.getAttribute('data-filter-trigger'));
+            instance.setSort(trigger.getAttribute('data-filter-trigger'));
         });
     });
 
     // Set the first active sort to the first sorter btn found
-    setSort(triggers[0].getAttribute('data-filter-trigger'));
+    instance.setSort(triggers[0].getAttribute('data-filter-trigger'));
 
     // Some serious exposing happens here
     return instance;

@@ -1,37 +1,56 @@
+import observer from '../libs/observer';
+
 // Theme Switcher Factory
-export const createThemeSwitcher = (container) => {
-    const options = ['light', 'dark'];
+export const createThemeSwitcher = container => {
+    const instance = Object.assign({}, observer()); // Object composition
+    const themes = [];
+    const state = {
+        theme: ''
+    };
 
     /**
      * Set active theme
      *
      * @param {String} theme to switch to
      */
-    const setTheme = (theme) => {
-        document.body.classList.toggle(options[0], options[0] === theme);
-        document.body.classList.toggle(options[1], options[1] === theme);
+    instance.setTheme = theme => {
+        state.theme = theme;
 
-        triggers.forEach((trigger) => {
-            trigger.classList.toggle('is-active', trigger.getAttribute('data-switch-trigger') === theme);
+        // Change body class to represent theme
+        themes.forEach(_theme => {
+            document.body.classList.toggle(_theme, _theme === state.theme);
         });
+
+        triggers.forEach(trigger => {
+            trigger.classList.toggle('is-active', trigger.getAttribute('data-switch-trigger') === state.theme);
+        });
+
+        // Notify all subscribers
+        instance.trigger('changed', state.theme);
     };
 
-    // Glob triggers
+    // Expose state.sort
+    instance.getTheme = () => state.theme;
+
+    // Cache triggers
     const triggers = container.querySelectorAll('[data-switch-trigger]');
 
-    // Attach event listeners
     triggers.forEach((trigger) => {
-        trigger.addEventListener('click', (event) => {
-            event.preventDefault();
-            setTheme(trigger.getAttribute('data-switch-trigger'));
+        const theme = trigger.getAttribute('data-switch-trigger');
+
+        // Save theme in themes array
+        themes.push(theme);
+
+        // Attach event listeners
+        trigger.addEventListener('click', e => {
+            e.preventDefault();
+            instance.setTheme(theme);
         });
     });
 
-    // Set option1 as default theme at pageload
-    setTheme(options[0]);
+    // Set first theme as default theme at pageload
+    instance.setTheme(themes[0]);
 
     // Some serious exposing happens here
-    return {
-        setTheme
-    };
+    return instance;
 };

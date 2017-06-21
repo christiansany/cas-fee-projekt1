@@ -65,17 +65,17 @@
 	
 	var _noteModel2 = _interopRequireDefault(_noteModel);
 	
-	var _themeSwitcher = __webpack_require__(142);
+	var _router = __webpack_require__(142);
 	
-	var _sorter = __webpack_require__(143);
+	var _themeSwitcher = __webpack_require__(143);
 	
-	var _filter = __webpack_require__(144);
+	var _sorter = __webpack_require__(144);
 	
-	var _form = __webpack_require__(145);
+	var _filter = __webpack_require__(145);
 	
-	var _router = __webpack_require__(148);
+	var _noteList = __webpack_require__(146);
 	
-	var _noteList = __webpack_require__(149);
+	var _form = __webpack_require__(148);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -87,9 +87,10 @@
 	 */
 	
 	// TODO: 0 notes view
-	// TODO: save theme in localstorage for continued visits
 	// TODO: defer laoding the fonts for faster first paint
 	// TODO: Change title on edit page according for edit mode or new note mode
+	// TODO: Add favicon
+	// TODO: Add documentation in readme file on how to set up this project
 	
 	// Dependencies
 	// import observer from './libs/observer';
@@ -138,10 +139,31 @@
 	    noteList.renderNotes(notes);
 	};
 	
-	// Subscribe to all kinds of changes who shoud mutate the list view
-	sorter.on('changed', stateChanged);
-	filter.on('changed', stateChanged);
-	_noteModel2.default.stream('notes', stateChanged);
+	// Load sort from last visit (if visited before)
+	var sort = localStorage.getItem('sort');
+	if (sort) {
+	    sorter.setSort(sort);
+	}
+	
+	sorter.on('changed', function (sort) {
+	    localStorage.setItem('sort', sort); // Save sort to localStorage
+	    stateChanged(); // Rerenders NoteList
+	});
+	
+	// Load activeFilter from last visit (if visited before)
+	var activeFilter = localStorage.getItem('activeFilter');
+	if (activeFilter) {
+	    filter.setFilter(JSON.parse(activeFilter)); // JSON.parse converts the string to an actual boolean
+	}
+	
+	filter.on('changed', function (activeFilter) {
+	    localStorage.setItem('activeFilter', activeFilter); // Save activeFilter to localStorage
+	    stateChanged(); // Rerenders NoteList
+	});
+	
+	// filter.on('changed', stateChanged);
+	_noteModel2.default.stream('notes', stateChanged); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
+	
 	
 	// const showFinishedTrigger = document.querySelector('[data-show-finished]');
 	// showFinishedTrigger.addEventListener('change', e => {
@@ -151,17 +173,27 @@
 	var newNoteTrigger = document.querySelector('[data-new-note]');
 	newNoteTrigger.addEventListener('click', function (e) {
 	    e.preventDefault();
+	
+	    document.querySelector('[data-edit-new-title]').innerHTML = 'New Note';
+	
 	    router.push('/new-edit');
+	});
+	
+	// Load theme from last visit (if visited before)
+	var theme = localStorage.getItem('theme');
+	if (theme) {
+	    themeSwitcher.setTheme(theme);
+	}
+	
+	// Save the current theme to localstorage
+	themeSwitcher.on('changed', function (theme) {
+	    localStorage.setItem('theme', theme);
 	});
 	
 	// Subscribe to cancle
 	form.on('cancle', function () {
-	
-	    // Clear the form
-	    form.clear();
-	
-	    // Route back to the list view
-	    router.push('/list');
+	    form.clear(); // Clear the form
+	    router.push('/list'); // Route back to the list view
 	});
 	
 	form.on('submit', function (data) {
@@ -173,11 +205,8 @@
 	        _noteModel2.default.addNote(data);
 	    }
 	
-	    // Clear the form
-	    form.clear();
-	
-	    // Route back to the list view
-	    router.push('/list');
+	    form.clear(); // Clear the form
+	    router.push('/list'); // Route back to the list view
 	});
 	
 	noteList.on('finish', function (uid) {
@@ -198,12 +227,13 @@
 	    form.populateFields(_noteModel2.default.notes.find(function (n) {
 	        return n.uid === uid;
 	    }));
+	
+	    document.querySelector('[data-edit-new-title]').innerHTML = 'Edit Note';
+	
 	    router.push('/new-edit');
 	});
 	
-	noteList.on('delete', function (uid) {
-	    _noteModel2.default.removeNote(uid);
-	});
+	noteList.on('delete', _noteModel2.default.removeNote);
 	
 	// Function to create test data
 	window.genNotes = function () {
@@ -17048,15 +17078,13 @@
 	
 	var _observer2 = _interopRequireDefault(_observer);
 	
-	var _moment = __webpack_require__(2);
-	
-	var _moment2 = _interopRequireDefault(_moment);
-	
 	var _note = __webpack_require__(141);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } // Dependencies
+	
+	// import Moment from 'moment';
 	
 	
 	// NoteModel factory
@@ -17173,7 +17201,6 @@
 	     *
 	     * @param {String} content to stream ('notes', 'noteById')
 	     * @param {Function} callback to call
-	     *
 	     */
 	    self.stream = function (content, callback) {
 	
@@ -17457,46 +17484,99 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	var createRouter = exports.createRouter = function createRouter(container) {
+	    var instance = Object.assign({});
+	
+	    var views = container.querySelectorAll('[data-route]');
+	
+	    instance.push = function (viewName) {
+	        views.forEach(function (view) {
+	            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
+	        });
+	
+	        // Doesn't work with browserify
+	        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
+	    };
+	
+	    return instance;
+	};
+
+/***/ }),
+/* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createThemeSwitcher = undefined;
+	
+	var _observer = __webpack_require__(140);
+	
+	var _observer2 = _interopRequireDefault(_observer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	// Theme Switcher Factory
 	var createThemeSwitcher = exports.createThemeSwitcher = function createThemeSwitcher(container) {
-	    var options = ['light', 'dark'];
+	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
+	    var themes = [];
+	    var state = {
+	        theme: ''
+	    };
 	
 	    /**
 	     * Set active theme
 	     *
 	     * @param {String} theme to switch to
 	     */
-	    var setTheme = function setTheme(theme) {
-	        document.body.classList.toggle(options[0], options[0] === theme);
-	        document.body.classList.toggle(options[1], options[1] === theme);
+	    instance.setTheme = function (theme) {
+	        state.theme = theme;
+	
+	        // Change body class to represent theme
+	        themes.forEach(function (_theme) {
+	            document.body.classList.toggle(_theme, _theme === state.theme);
+	        });
 	
 	        triggers.forEach(function (trigger) {
-	            trigger.classList.toggle('is-active', trigger.getAttribute('data-switch-trigger') === theme);
+	            trigger.classList.toggle('is-active', trigger.getAttribute('data-switch-trigger') === state.theme);
 	        });
+	
+	        // Notify all subscribers
+	        instance.trigger('changed', state.theme);
 	    };
 	
-	    // Glob triggers
+	    // Expose state.sort
+	    instance.getTheme = function () {
+	        return state.theme;
+	    };
+	
+	    // Cache triggers
 	    var triggers = container.querySelectorAll('[data-switch-trigger]');
 	
-	    // Attach event listeners
 	    triggers.forEach(function (trigger) {
-	        trigger.addEventListener('click', function (event) {
-	            event.preventDefault();
-	            setTheme(trigger.getAttribute('data-switch-trigger'));
+	        var theme = trigger.getAttribute('data-switch-trigger');
+	
+	        // Save theme in themes array
+	        themes.push(theme);
+	
+	        // Attach event listeners
+	        trigger.addEventListener('click', function (e) {
+	            e.preventDefault();
+	            instance.setTheme(theme);
 	        });
 	    });
 	
-	    // Set option1 as default theme at pageload
-	    setTheme(options[0]);
+	    // Set first theme as default theme at pageload
+	    instance.setTheme(themes[0]);
 	
 	    // Some serious exposing happens here
-	    return {
-	        setTheme: setTheme
-	    };
+	    return instance;
 	};
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17519,7 +17599,7 @@
 	        sort: ''
 	    };
 	
-	    var setSort = function setSort(sort) {
+	    instance.setSort = function (sort) {
 	        state.sort = sort;
 	
 	        triggers.forEach(function (trigger) {
@@ -17535,24 +17615,25 @@
 	        return state.sort;
 	    };
 	
+	    // Cache triggers
 	    var triggers = container.querySelectorAll('[data-filter-trigger]');
 	
 	    triggers.forEach(function (trigger) {
 	        trigger.addEventListener('click', function (e) {
 	            e.preventDefault();
-	            setSort(trigger.getAttribute('data-filter-trigger'));
+	            instance.setSort(trigger.getAttribute('data-filter-trigger'));
 	        });
 	    });
 	
 	    // Set the first active sort to the first sorter btn found
-	    setSort(triggers[0].getAttribute('data-filter-trigger'));
+	    instance.setSort(triggers[0].getAttribute('data-filter-trigger'));
 	
 	    // Some serious exposing happens here
 	    return instance;
 	};
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17575,11 +17656,18 @@
 	        showFinished: false
 	    };
 	
-	    var clickHandler = function clickHandler(e) {
-	        state.showFinished = e.target.checked;
+	    instance.setFilter = function (activeFilter) {
+	        state.showFinished = activeFilter;
+	
+	        // Set the checkbox to the correct state, in case the filter was changed from outside of the module
+	        trigger.checked = state.showFinished;
 	
 	        // Notify all subscribers
 	        instance.trigger('changed', state.showFinished);
+	    };
+	
+	    var clickHandler = function clickHandler(e) {
+	        instance.setFilter(e.target.checked);
 	    };
 	
 	    trigger.addEventListener('change', clickHandler);
@@ -17594,7 +17682,110 @@
 	};
 
 /***/ }),
-/* 145 */
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createNoteList = undefined;
+	
+	var _observer = __webpack_require__(140);
+	
+	var _observer2 = _interopRequireDefault(_observer);
+	
+	var _note = __webpack_require__(147);
+	
+	var _note2 = _interopRequireDefault(_note);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// NoteList Factory
+	var createNoteList = exports.createNoteList = function createNoteList(container) {
+	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
+	
+	    var listDelegate = function listDelegate(e) {
+	
+	        var trigger = void 0;
+	        var uid = event.target.closest('[data-note]').getAttribute('data-note');
+	
+	        if ((trigger = event.target.closest('[data-finish-note]')) !== null) {
+	            e.preventDefault();
+	            trigger.checked ? instance.trigger('finish', uid) : instance.trigger('unfinish', uid);
+	        } else if (event.target.closest('[data-note-edit]') !== null) {
+	            e.preventDefault();
+	            instance.trigger('edit', uid);
+	        } else if (event.target.closest('[data-note-delete]') !== null) {
+	            e.preventDefault();
+	            instance.trigger('delete', uid);
+	        }
+	    };
+	
+	    instance.renderNotes = function (notes) {
+	        listContainer.innerHTML = '';
+	
+	        notes.forEach(function (note) {
+	            listContainer.innerHTML += (0, _note2.default)(note);
+	        });
+	    };
+	
+	    var listContainer = container.querySelector('[data-notelist-list]');
+	
+	    listContainer.addEventListener('click', listDelegate);
+	
+	    return instance;
+	};
+	
+	// Tempaltes -> Are getting laoded via handlebars-loader
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(120);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    return "is-finished";
+	},"3":function(container,depth0,helpers,partials,data) {
+	    return " checked=\"checked\"";
+	},"5":function(container,depth0,helpers,partials,data) {
+	    return "                <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n";
+	},"7":function(container,depth0,helpers,partials,data) {
+	    var helper;
+	
+	  return "                Finished: "
+	    + container.escapeExpression(((helper = (helper = helpers.finishDateFormatted || (depth0 != null ? depth0.finishDateFormatted : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"finishDateFormatted","hash":{},"data":data}) : helper)))
+	    + "\n";
+	},"9":function(container,depth0,helpers,partials,data) {
+	    var helper;
+	
+	  return "                Due: "
+	    + container.escapeExpression(((helper = (helper = helpers.dueDateFormatted || (depth0 != null ? depth0.dueDateFormatted : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"dueDateFormatted","hash":{},"data":data}) : helper)))
+	    + "\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+	
+	  return "<li class=\"note "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "\" data-note=\""
+	    + alias4(((helper = (helper = helpers.uid || (depth0 != null ? depth0.uid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uid","hash":{},"data":data}) : helper)))
+	    + "\">\n    <div class=\"note__action\">\n        <input class=\"note__finish-checkbox\" type=\"checkbox\""
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + " data-finish-note>\n    </div>\n    <div class=\"note__content\">\n        <p class=\"note__title\">"
+	    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "</p>\n        <p class=\"note__description\">"
+	    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
+	    + "</p>\n    </div>\n    <div class=\"note__meta\">\n        <div class=\"note__importance\">\n"
+	    + ((stack1 = (helpers.times || (depth0 && depth0.times) || alias2).call(alias1,(depth0 != null ? depth0.importance : depth0),{"name":"times","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "        </div>\n        <div class=\"note__duedate\">\n"
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
+	    + "        </div>\n        <div class=\"note__edit-wrapper\">\n            <a href=\"#\" class=\"note__edit-link\" data-note-edit>\n                <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>&nbsp;&nbsp;edit\n            </a>\n            &nbsp;&nbsp;\n            <a href=\"#\" class=\"note__delete-link\" data-note-delete>\n                <i class=\"fa fa-trash\" aria-hidden=\"true\"></i>&nbsp;&nbsp;delete\n            </a>\n        </div>\n    </div>\n</li>\n";
+	},"useData":true});
+
+/***/ }),
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17608,7 +17799,7 @@
 	
 	var _observer2 = _interopRequireDefault(_observer);
 	
-	var _pikaday = __webpack_require__(146);
+	var _pikaday = __webpack_require__(149);
 	
 	var _pikaday2 = _interopRequireDefault(_pikaday);
 	
@@ -17679,7 +17870,7 @@
 	};
 
 /***/ }),
-/* 146 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -17708,7 +17899,7 @@
 	            // Load moment.js as an optional dependency
 	            var id = 'moment';
 	            try {
-	                moment = __webpack_require__(147)(id);
+	                moment = __webpack_require__(150)(id);
 	            } catch (e) {}
 	            return factory(moment);
 	        }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -18829,14 +19020,14 @@
 	});
 
 /***/ }),
-/* 147 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var map = {
 		"./observer": 140,
 		"./observer.js": 140,
-		"./pikaday": 146,
-		"./pikaday.js": 146
+		"./pikaday": 149,
+		"./pikaday.js": 149
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -18849,137 +19040,8 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 147;
+	webpackContext.id = 150;
 
-
-/***/ }),
-/* 148 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var createRouter = exports.createRouter = function createRouter(container) {
-	    var instance = Object.assign({});
-	
-	    var views = container.querySelectorAll('[data-route]');
-	
-	    instance.push = function (viewName) {
-	        views.forEach(function (view) {
-	            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
-	        });
-	
-	        // Doesn't work with browserify
-	        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
-	    };
-	
-	    return instance;
-	};
-
-/***/ }),
-/* 149 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.createNoteList = undefined;
-	
-	var _observer = __webpack_require__(140);
-	
-	var _observer2 = _interopRequireDefault(_observer);
-	
-	var _note = __webpack_require__(150);
-	
-	var _note2 = _interopRequireDefault(_note);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	// NoteList Factory
-	var createNoteList = exports.createNoteList = function createNoteList(container) {
-	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
-	
-	    var listDelegate = function listDelegate(e) {
-	
-	        var trigger = void 0;
-	        var uid = event.target.closest('[data-note]').getAttribute('data-note');
-	
-	        if ((trigger = event.target.closest('[data-finish-note]')) !== null) {
-	            e.preventDefault();
-	            trigger.checked ? instance.trigger('finish', uid) : instance.trigger('unfinish', uid);
-	        } else if (event.target.closest('[data-note-edit]') !== null) {
-	            e.preventDefault();
-	            instance.trigger('edit', uid);
-	        } else if (event.target.closest('[data-note-delete]') !== null) {
-	            e.preventDefault();
-	            instance.trigger('delete', uid);
-	        }
-	    };
-	
-	    instance.renderNotes = function (notes) {
-	        listContainer.innerHTML = '';
-	
-	        notes.forEach(function (note) {
-	            listContainer.innerHTML += (0, _note2.default)(note);
-	        });
-	    };
-	
-	    var listContainer = container.querySelector('[data-notelist-list]');
-	
-	    listContainer.addEventListener('click', listDelegate);
-	
-	    return instance;
-	};
-	
-	// Tempaltes -> Are getting laoded via handlebars-loader
-
-/***/ }),
-/* 150 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var Handlebars = __webpack_require__(120);
-	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
-	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
-	    return "is-finished";
-	},"3":function(container,depth0,helpers,partials,data) {
-	    return " checked=\"checked\"";
-	},"5":function(container,depth0,helpers,partials,data) {
-	    return "                <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n";
-	},"7":function(container,depth0,helpers,partials,data) {
-	    var helper;
-	
-	  return "                Finished: "
-	    + container.escapeExpression(((helper = (helper = helpers.finishDateFormatted || (depth0 != null ? depth0.finishDateFormatted : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"finishDateFormatted","hash":{},"data":data}) : helper)))
-	    + "\n";
-	},"9":function(container,depth0,helpers,partials,data) {
-	    var helper;
-	
-	  return "                Due: "
-	    + container.escapeExpression(((helper = (helper = helpers.dueDateFormatted || (depth0 != null ? depth0.dueDateFormatted : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"dueDateFormatted","hash":{},"data":data}) : helper)))
-	    + "\n";
-	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
-	
-	  return "<li class=\"note "
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + "\" data-note=\""
-	    + alias4(((helper = (helper = helpers.uid || (depth0 != null ? depth0.uid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uid","hash":{},"data":data}) : helper)))
-	    + "\">\n    <div class=\"note__action\">\n        <input class=\"note__finish-checkbox\" type=\"checkbox\""
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + " data-finish-note>\n    </div>\n    <div class=\"note__content\">\n        <p class=\"note__title\">"
-	    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
-	    + "</p>\n        <p class=\"note__description\">"
-	    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
-	    + "</p>\n    </div>\n    <div class=\"note__meta\">\n        <div class=\"note__importance\">\n"
-	    + ((stack1 = (helpers.times || (depth0 && depth0.times) || alias2).call(alias1,(depth0 != null ? depth0.importance : depth0),{"name":"times","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + "        </div>\n        <div class=\"note__duedate\">\n"
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
-	    + "        </div>\n        <div class=\"note__edit-wrapper\">\n            <a href=\"#\" class=\"note__edit-link\" data-note-edit>\n                <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>&nbsp;&nbsp;edit\n            </a>\n            &nbsp;&nbsp;\n            <a href=\"#\" class=\"note__delete-link\" data-note-delete>\n                <i class=\"fa fa-trash\" aria-hidden=\"true\"></i>&nbsp;&nbsp;delete\n            </a>\n        </div>\n    </div>\n</li>\n";
-	},"useData":true});
 
 /***/ })
 /******/ ]);

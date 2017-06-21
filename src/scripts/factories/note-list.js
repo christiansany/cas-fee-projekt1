@@ -4,7 +4,7 @@ import observer from '../libs/observer';
 import noteTemplate from '../../templates/note.hbs';
 
 // NoteList Factory
-export const createNoteList = (container) => {
+export const createNoteList = container => {
     const instance = Object.assign({}, observer()); // Object composition
 
     const listDelegate = e => {
