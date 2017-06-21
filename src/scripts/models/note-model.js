@@ -16,13 +16,14 @@ const NoteModel = () => {
 
         // Fetch notes from localStorage
         // This will later be replaced by the ajaxcall
-        const temp = JSON.parse(localStorage.getItem('notes')).map(note => new Note(note));
-
-        console.log('stuff', JSON.parse(localStorage.getItem('notes')));
+        const temp = JSON.parse(localStorage.getItem('notes'));
 
         // Check if notes found in localStorage
         if (temp !== null) {
-            self.notes.push(...temp);
+
+            const notes = temp.map(note => new Note(note));
+
+            self.notes.push(...notes);
 
             // Set the internal uid to the highest found note
             self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
@@ -69,13 +70,15 @@ const NoteModel = () => {
 
     self.updateNote = (uid, data) => {
 
-        const index = self.notes.findIndex(n => n.uid === uid);
+        const note = self.notes.find(n => n.uid === uid);
 
-        self.notes[index] = new Note(data);
+        for (var key in data) {
 
-        // console.log(note);
-        //
-        // Object.assign(note, data);
+            // Check for both the data and the note to have the property to change it (also, filter out uid changes, since this is prohibited)
+            if (data.hasOwnProperty(key) && note.hasOwnProperty(key) && key !== 'uid') {
+                note[key] = data[key];
+            }
+        }
 
         // Saves current notes to localStorage
         save();

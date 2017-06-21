@@ -1,6 +1,6 @@
 <li class="note {{#if finishDate}}is-finished{{/if}}" data-note="{{uid}}">
     <div class="note__action">
-        <input class="note__finish-checkbox" type="checkbox"{{#if finished}} checked="checked"{{/if}} data-finish-note>
+        <input class="note__finish-checkbox" type="checkbox"{{#if finishDate}} checked="checked"{{/if}} data-finish-note>
     </div>
     <div class="note__content">
         <p class="note__title">{{title}}</p>
@@ -21,11 +21,11 @@
         </div>
         <div class="note__edit-wrapper">
             <a href="#" class="note__edit-link" data-note-edit>
-                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;bearbeiten
+                <i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;edit
             </a>
             &nbsp;&nbsp;
             <a href="#" class="note__delete-link" data-note-delete>
-                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;löschen
+                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;&nbsp;delete
             </a>
         </div>
     </div>

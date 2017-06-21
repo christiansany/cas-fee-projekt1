@@ -4,20 +4,17 @@
  * @author christian.sany@notch-interactive.com
  */
 
-// Import polyfills
-// No polyfills will be used, since this Project doesn't have to support older Browsers
+// TODO: 0 notes view
+// TODO: save theme in localstorage for continued visits
+// TODO: defer laoding the fonts for faster first paint
+// TODO: Change title on edit page according for edit mode or new note mode
 
 // Dependencies
-import observer from './libs/observer';
+// import observer from './libs/observer';
 import Moment from 'moment';
-// import themeSwitcher from './factories/theme-switcher';
-// import pubsub from './helpers/pubsub';
-// import handlebars from 'handlebars';
-// import handlebars from 'handlebars';
-// import render from './composites/render';
-// import { view } from './composites/mvc';
 import Handlebars from 'handlebars/runtime';
 
+// https://stackoverflow.com/questions/11924452/iterating-over-basic-for-loop-using-handlebars-js
 Handlebars.registerHelper('times', (n, block) => {
     let accum = '';
     for(let i = 0; i < n; ++i)
@@ -25,42 +22,59 @@ Handlebars.registerHelper('times', (n, block) => {
     return accum;
 });
 
-// Components
+// Models
+import Notes from './models/note-model';
+
+// Views
 import { createThemeSwitcher } from './factories/theme-switcher';
 import { createSorter } from './factories/sorter';
+import { createFilter } from './factories/filter';
 import { createForm } from './factories/form';
 import { createRouter } from './factories/router';
 import { createNoteList } from './factories/note-list';
 
-// TODO: This controller should not have a copy of the notes
+// Instanciate Viewmodels
+const router = createRouter(document.querySelector('[data-router-outlet]'));
+const themeSwitcher = createThemeSwitcher(document.querySelector('[data-theme-switcher]'));
+const sorter = createSorter(document.querySelector('[data-filter]'));
+const filter = createFilter(document.querySelector('[data-show-finished]'));
+const noteList = createNoteList(document.querySelector('[data-notelist]'));
+const form = createForm(document.querySelector('[data-form]'));
 
-const state = {
-    notes: []
+/**
+ * stateChanged
+ *
+ * Tells the NoteList to render the Notes because of some change
+ */
+const stateChanged = () => {
+    const sort = sorter.getSort();
+    const notes = Notes.notes
+        .filter((filter.showFinished()) ? () => true : note => !note.finishDate)
+        .sort((a, b) => {
+            if(sort === 'duedate') {
+                return a.dueDate - b.dueDate;
+            } else if (sort === 'creationdate') {
+                return a.createdDate - b.createdDate;
+            } else if (sort === 'importance') {
+                return b.importance - a.importance;
+            }
+        });
+
+    noteList.renderNotes(notes);
 };
 
-// class Note {
-//     constructor(data) {
-//         this.title = data.title;
-//         this.description = data.description;
-//         this.importance = data.importance;
-//         this.created = data.created;
-//         // this.title = data.title;
-//     }
-// }
+// Subscribe to all kinds of changes who shoud mutate the list view
+sorter.on('changed', stateChanged);
+filter.on('changed', stateChanged);
+Notes.stream('notes', stateChanged);
 
-// Instanciate themeSwitcher
-createThemeSwitcher(document.querySelector('[data-theme-switcher]'));
 
-const sorter = createSorter(document.querySelector('[data-filter]'));
 
-sorter.on('sortChange', (sort) => {
-    console.log('Sort Notes by:', sort);
-});
 
-const showFinishedTrigger = document.querySelector('[data-show-finished]');
-showFinishedTrigger.addEventListener('change', e => {
-    console.log(e.target.checked);
-});
+// const showFinishedTrigger = document.querySelector('[data-show-finished]');
+// showFinishedTrigger.addEventListener('change', e => {
+//     console.log(e.target.checked);
+// });
 
 const newNoteTrigger = document.querySelector('[data-new-note]');
 newNoteTrigger.addEventListener('click', e => {
@@ -71,27 +85,6 @@ newNoteTrigger.addEventListener('click', e => {
 
 
 
-//
-// const createRouter = (container) => {
-//     const instance = Object.assign({}, observer());
-//
-//     const views = container.querySelectorAll('[data-route]');
-//
-//     instance.push = (viewName) => {
-//         views.forEach((view) => {
-//             view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
-//         });
-//
-//         // Doesn't work with browserify
-//         // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
-//     };
-//
-//     return instance;
-// };
-
-const router = createRouter(document.querySelector('[data-router-outlet]'));
-
-const form = createForm(document.querySelector('[data-form]'));
 
 // Subscribe to cancle
 form.on('cancle', () => {
@@ -107,9 +100,9 @@ form.on('submit', (data) => {
 
     // Check if an edit was made, or a new Note should be generated
     if(data.hasOwnProperty('uid') && data.uid !== '') {
-        Model.updateNote(data.uid, data);
+        Notes.updateNote(data.uid, data);
     } else {
-        Model.addNote(data);
+        Notes.addNote(data);
     }
 
     // Clear the form
@@ -128,92 +121,64 @@ form.on('submit', (data) => {
 
 
 
-const notelist = createNoteList(document.querySelector('[data-notelist]'));
 
-notelist.on('finish', uid => {
-    Model.updateNote(uid, {
+noteList.on('finish', uid => {
+    Notes.updateNote(uid, {
         finishDate: new Moment()
     });
 });
 
-notelist.on('unfinish', uid => {
-    Model.updateNote(uid, {
+noteList.on('unfinish', uid => {
+    Notes.updateNote(uid, {
         finishDate: false
     });
 });
 
-notelist.on('edit', uid => {
+noteList.on('edit', uid => {
 
     // Populate form fields with Notedata
-    form.populateFields(Model.notes.find(n => n.uid === uid));
+    form.populateFields(Notes.notes.find(n => n.uid === uid));
     router.push('/new-edit');
 });
 
-notelist.on('delete', uid => {
-    Model.removeNote(uid);
+noteList.on('delete', uid => {
+    Notes.removeNote(uid);
 });
 
-// The state changed, please re-render the list
-const stateChange = () => {
-    const notes = Model.notes;
-
-    console.log(sorter.getSort());
-
-    // console.log('renders', notes);
-
-    notelist.renderNotes(notes);
-};
 
 
-
-import Model from './models/note-model';
-
-// Callback wil be called, every time the notes get mutated
-Model.stream('notes', stateChange);
 
 
 // Function to create test data
 window.genNotes = function() {
-    Model.add({
+    Notes.addNote({
         title: 'Explore the street art of East London 1',
         description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-        importance: 5,
-        due: new Moment('2017-08-21'),
-        get dueFormated() {
-            return this.due.format('DD.MM.YYYY');
-        }
+        importance: 2,
+        dueDate: '21.08.2017'
     });
 
-    Model.add({
+    Notes.addNote({
         title: 'Explore the street art of East London 2',
         description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-        importance: 5,
-        due: new Moment('2017-08-22'),
-        get dueFormated() {
-            return this.due.format('DD.MM.YYYY');
-        }
+        importance: 4,
+        dueDate: '26.08.2017'
     });
 
-    Model.add({
+    Notes.addNote({
         title: 'Explore the street art of East London 3',
         description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-        importance: 5,
-        due: new Moment('2017-08-23'),
-        get dueFormated() {
-            return this.due.format('DD.MM.YYYY');
-        }
+        importance: 3,
+        dueDate: '20.08.2017'
     });
 
-    Model.add({
+    Notes.addNote({
         title: 'Explore the street art of East London 4',
         description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
         importance: 5,
-        due: new Moment('2017-08-24'),
-        get dueFormated() {
-            return this.due.format('DD.MM.YYYY');
-        }
+        dueDate: '25.08.2017'
     });
 };
 
-// Model
+// Notes
 // import NoteModel from './models/note-model';

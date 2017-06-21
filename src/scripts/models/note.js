@@ -44,17 +44,34 @@ export const Note = function(obj) {
         this.createdDate = new Moment();
     }
 
-    if (obj.hasOwnProperty('dueDate') && typeof obj.dueDate !== 'boolean') {
-        this.dueDate = new Moment(obj.dueDate, 'DD.MM.YYYY'); // The due date is set via DD.MM.YYYY format, unlike other date related params
-    } else {
-        this.dueDate = false; // This should never happen
-    }
+    Object.defineProperty(this, 'dueDate', {
+        get() {
+            return this._dueDate;
+        },
+        set(val) {
+            if(val instanceof Moment)
+                this._dueDate = val;
+            else
+                this._dueDate = new Moment(val, 'DD.MM.YYYY');
+        }
+    });
+
+    this.dueDate = obj.dueDate;
+
+    // if (obj.hasOwnProperty('dueDate') && typeof obj.dueDate !== 'boolean') {
+    //     this.dueDate = new Moment(obj.dueDate, 'DD.MM.YYYY'); // The due date is set via DD.MM.YYYY format, unlike other date related params
+    // } else {
+    //     this.dueDate = false; // This should never happen
+    // }
 
     if (obj.hasOwnProperty('finishDate') && typeof obj.finishDate !== 'boolean') {
         this.finishDate = new Moment(obj.finishDate);
     } else {
         this.finishDate = false;
     }
+    //
+    // if(obj.hasOwnProperty('dueDateFormatted'))
+    //     this.dueDateFormatted = obj.dueDateFormatted;
 };
 
 // Serialize a note to be compatible with JSON

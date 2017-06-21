@@ -3,7 +3,7 @@ import Pikaday from '../libs/pikaday';
 
 // Form Factory
 export const createForm = (container) => {
-    const instance = Object.assign({}, observer());
+    const instance = Object.assign({}, observer()); // Object composition
 
     const elements = {
         form: container,

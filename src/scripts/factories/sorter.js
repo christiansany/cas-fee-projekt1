@@ -2,19 +2,20 @@ import observer from '../libs/observer';
 
 // Sorter Factory
 export const createSorter = (container) => {
-    const instance = Object.assign({}, observer());
+    const instance = Object.assign({}, observer()); // Object composition
     const state = {
         sort: ''
     };
 
     const setSort = (sort) => {
-        instance.trigger('sortChange', sort);
-
         state.sort = sort;
 
         triggers.forEach((trigger) => {
-            trigger.classList.toggle('is-active', trigger.getAttribute('data-filter-trigger') === sort);
+            trigger.classList.toggle('is-active', trigger.getAttribute('data-filter-trigger') === state.sort);
         });
+
+        // Notify all subscribers
+        instance.trigger('changed', state.sort);
     };
 
     // Expose state.sort
@@ -30,7 +31,7 @@ export const createSorter = (container) => {
     });
 
     // Set the first active sort to the first sorter btn found
-    setSort(triggers[0].getAttribute('data-filter-trigger'))
+    setSort(triggers[0].getAttribute('data-filter-trigger'));
 
     // Some serious exposing happens here
     return instance;

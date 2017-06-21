@@ -5,18 +5,21 @@ import noteTemplate from '../../templates/note.hbs';
 
 // NoteList Factory
 export const createNoteList = (container) => {
-    const instance = Object.assign({}, observer());
+    const instance = Object.assign({}, observer()); // Object composition
 
-    const listDelegate = event => {
+    const listDelegate = e => {
 
         let trigger;
         const uid = event.target.closest('[data-note]').getAttribute('data-note');
 
         if((trigger = event.target.closest('[data-finish-note]')) !== null) {
+            e.preventDefault();
             (trigger.checked) ? instance.trigger('finish', uid) : instance.trigger('unfinish', uid);
         } else if(event.target.closest('[data-note-edit]') !== null) {
+            e.preventDefault();
             instance.trigger('edit', uid);
         } else if(event.target.closest('[data-note-delete]') !== null) {
+            e.preventDefault();
             instance.trigger('delete', uid);
         }
     };
