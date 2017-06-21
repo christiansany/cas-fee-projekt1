@@ -1,10 +1,13 @@
 // Dependencies
 import observer from '../libs/observer';
 import Moment from 'moment';
+import { Note } from './note';
 
 // NoteModel factory
 const NoteModel = () => {
-    const self = {};
+    const self = {
+        notes: []
+    };
     const notes = []; // private variable
     const ob = observer(); // generate private observer for model internal communication
 
@@ -13,25 +16,29 @@ const NoteModel = () => {
 
         // Fetch notes from localStorage
         // This will later be replaced by the ajaxcall
-        const temp = JSON.parse(localStorage.getItem('notes'));
+        const temp = JSON.parse(localStorage.getItem('notes')).map(note => new Note(note));
+
+        console.log('stuff', JSON.parse(localStorage.getItem('notes')));
 
         // Check if notes found in localStorage
         if (temp !== null) {
-            // notes = temp;
-            notes.push(...temp);
+            self.notes.push(...temp);
 
             // Set the internal uid to the highest found note
-            notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
+            self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
         }
 
         // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-        ob.trigger('notes', notes, 'fetched');
+        ob.trigger('notes', self.notes, 'fetched');
 
         // Set fetched to true, since the notes are fetched now
         fetched = true;
     };
 
     const save = () => {
+
+        const notes = self.notes.map(note => Note.serialize(note));
+
         // Save notes to localStorage
         localStorage.setItem('notes', JSON.stringify(notes));
     };
@@ -39,66 +46,54 @@ const NoteModel = () => {
     // Internal flag
     let fetched = false; // Set to true when initial fetching for the data is finished
 
-    let uid = -1;
+    let uid = 0;
 
     // Public functions
-    self.add = (data) => {
-        // TODO: add checking of object
-        // TODO: performe ajax like task (ajax comes later)
-
+    self.addNote = (data) => {
         // Creature unique id for note and assign it to the note
         uid++;
-        const note = Object.assign({}, {
-            uid,
-            created: new Moment(),
-            finished: false
-        }, data);
 
-        return new Promise((resolve, reject) => {
-            try {
+        const note = new Note(Object.assign({}, data, {
+            uid: '' + uid
+        }));
 
-                // Push on notes
-                notes.push(note);
-
-                // Saves current notes to localStorage
-                save();
-
-                // Trigger stream subscribtions
-                ob.trigger('notes', notes, 'added');
-
-                // Resolve promise with
-                resolve(note);
-            } catch (e) {
-
-                // in case the later ajax call fails
-                reject(e);
-            }
-        });
-    };
-
-    self.update = (uid, data) => {
-
-        const note = notes.find(n => n.uid === parseInt(uid));
-
-        Object.assign(note, data);
+        // Push on notes
+        self.notes.push(note);
 
         // Saves current notes to localStorage
         save();
 
         // Trigger stream subscribtions
-        ob.trigger('notes', notes, 'updated');
+        ob.trigger('notes', self.notes, 'added');
     };
 
-    self.remove = (uid) => {
+    self.updateNote = (uid, data) => {
+
+        const index = self.notes.findIndex(n => n.uid === uid);
+
+        self.notes[index] = new Note(data);
+
+        // console.log(note);
+        //
+        // Object.assign(note, data);
+
+        // Saves current notes to localStorage
+        save();
+
+        // Trigger stream subscribtions
+        ob.trigger('notes', self.notes, 'updated');
+    };
+
+    self.removeNote = (uid) => {
 
         // Iteration stops at first return of true
-        notes.splice(notes.findIndex(note => note.uid === parseInt(uid)), 1);
+        self.notes.splice(self.notes.findIndex(note => note.uid === uid), 1);
 
         // Saves current notes to localStorage
         save();
 
         // Trigger stream subscribtions
-        ob.trigger('notes', notes, 'removed');
+        ob.trigger('notes', self.notes, 'removed');
     };
 
     /**

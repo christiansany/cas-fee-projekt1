@@ -16,14 +16,21 @@ import Moment from 'moment';
 // import handlebars from 'handlebars';
 // import render from './composites/render';
 // import { view } from './composites/mvc';
-// const Handlebars = require('handlebars');
+import Handlebars from 'handlebars/runtime';
 
-// Tempaltes -> Are getting laoded via handlebars-loader
-import noteTemplate from '../templates/note.hbs';
+Handlebars.registerHelper('times', (n, block) => {
+    let accum = '';
+    for(let i = 0; i < n; ++i)
+        accum += block.fn(i);
+    return accum;
+});
 
 // Components
 import { createThemeSwitcher } from './factories/theme-switcher';
 import { createSorter } from './factories/sorter';
+import { createForm } from './factories/form';
+import { createRouter } from './factories/router';
+import { createNoteList } from './factories/note-list';
 
 // TODO: This controller should not have a copy of the notes
 
@@ -51,107 +58,40 @@ sorter.on('sortChange', (sort) => {
 });
 
 const showFinishedTrigger = document.querySelector('[data-show-finished]');
-showFinishedTrigger.addEventListener('change', (event) => {
-    console.log(event.target.checked);
+showFinishedTrigger.addEventListener('change', e => {
+    console.log(e.target.checked);
 });
 
 const newNoteTrigger = document.querySelector('[data-new-note]');
-newNoteTrigger.addEventListener('click', () => {
+newNoteTrigger.addEventListener('click', e => {
+    e.preventDefault();
     router.push('/new-edit');
 });
 
 
 
 
-
-const createRouter = (container) => {
-    const instance = Object.assign({}, observer());
-
-    const views = container.querySelectorAll('[data-route]');
-
-    instance.push = (viewName) => {
-        views.forEach((view) => {
-            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
-        });
-
-        // Doesn't work with browserify
-        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
-    };
-
-    return instance;
-};
+//
+// const createRouter = (container) => {
+//     const instance = Object.assign({}, observer());
+//
+//     const views = container.querySelectorAll('[data-route]');
+//
+//     instance.push = (viewName) => {
+//         views.forEach((view) => {
+//             view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
+//         });
+//
+//         // Doesn't work with browserify
+//         // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
+//     };
+//
+//     return instance;
+// };
 
 const router = createRouter(document.querySelector('[data-router-outlet]'));
 
-window.router = router;
-
-
-
-
-
-
-// import 'pikaday';
-import Pikaday from './libs/pikaday';
-
-const createForm = (container) => {
-    const instance = Object.assign({}, observer());
-
-    // const form = container;
-    // const cancleButton = container.querySelector('[data-btn-cancle]');
-
-    const elements = {
-        form: container,
-        uid: container.querySelector('[data-form-uid]'),
-        title: container.querySelector('[data-form-title]'),
-        description: container.querySelector('[data-form-description]'),
-        importance: container.querySelector('[data-form-importance]'),
-        due: container.querySelector('[data-form-due]'),
-        cancleButton: container.querySelector('[data-btn-cancle]')
-    };
-
-    const picker = new Pikaday({
-        field: elements.due,
-        format: 'DD.MM.YYYY',
-        firstDay: 1,
-        minDate: new Date(),
-        defaultDate: new Date(),
-        setDefaultDate: true
-    });
-
-    // console.log(elements.due, picker);
-
-    instance.populateFields = data => {
-        elements.uid.value = data.uid;
-        elements.title.value = data.title;
-        elements.description.value = data.description;
-        elements.importance.value = data.importance;
-        elements.due.value = data.dueFormated;
-        picker.setMoment(data.due);
-    };
-
-    instance.clear = () => {
-        elements.uid.value = '';
-        elements.title.value = '';
-        elements.description.value = '';
-        elements.importance.value = '';
-        elements.due.value = '';
-        picker.setDate(new Date());
-    };
-
-    elements.form.addEventListener('submit', e => {
-        e.preventDefault();
-        console.log('here comes fieldvalidation');
-    });
-
-    elements.cancleButton.addEventListener('click', () => {
-        instance.trigger('cancle');
-    });
-
-    return instance;
-};
-
 const form = createForm(document.querySelector('[data-form]'));
-
 
 // Subscribe to cancle
 form.on('cancle', () => {
@@ -165,7 +105,12 @@ form.on('cancle', () => {
 
 form.on('submit', (data) => {
 
-    console.log('submit got triggered and validation was ok', data);
+    // Check if an edit was made, or a new Note should be generated
+    if(data.hasOwnProperty('uid') && data.uid !== '') {
+        Model.updateNote(data.uid, data);
+    } else {
+        Model.addNote(data);
+    }
 
     // Clear the form
     form.clear();
@@ -181,80 +126,50 @@ form.on('submit', (data) => {
 
 
 
-// Notelist Factory
-const createNoteList = (container) => {
-    const instance = Object.assign({}, observer());
 
-    const listDelegate = event => {
-
-        let trigger;
-        const uid = event.target.closest('[data-note]').getAttribute('data-note');
-
-        if((trigger = event.target.closest('[data-finish-note]')) !== null) {
-            (trigger.checked) ? instance.trigger('finish', uid) : instance.trigger('unfinish', uid);
-        } else if(event.target.closest('[data-note-edit]') !== null) {
-            instance.trigger('edit', uid);
-        } else if(event.target.closest('[data-note-delete]') !== null) {
-            instance.trigger('delete', uid);
-        }
-    };
-
-    instance.renderNotes = (notes) => {
-        listContainer.innerHTML = '';
-
-        notes.forEach(note => {
-            listContainer.innerHTML += noteTemplate(note);
-        });
-    };
-
-    const listContainer = container.querySelector('[data-notelist-list]');
-
-    listContainer.addEventListener('click', listDelegate);
-
-    return instance;
-};
 
 const notelist = createNoteList(document.querySelector('[data-notelist]'));
 
 notelist.on('finish', uid => {
-    Model.update(uid, {
-        finished: new Moment(),
-        get finishedFormated() {
-            return this.finished.format('DD.MM.YYYY');
-        }
+    Model.updateNote(uid, {
+        finishDate: new Moment()
     });
 });
 
 notelist.on('unfinish', uid => {
-    Model.update(uid, {
-        finished: false,
-        get finishdate() {
-            return '';
-        }
+    Model.updateNote(uid, {
+        finishDate: false
     });
 });
 
 notelist.on('edit', uid => {
 
     // Populate form fields with Notedata
-    form.populateFields(state.notes.find(n => n.uid === parseInt(uid)));
+    form.populateFields(Model.notes.find(n => n.uid === uid));
     router.push('/new-edit');
 });
 
 notelist.on('delete', uid => {
-    Model.remove(uid);
+    Model.removeNote(uid);
 });
+
+// The state changed, please re-render the list
+const stateChange = () => {
+    const notes = Model.notes;
+
+    console.log(sorter.getSort());
+
+    // console.log('renders', notes);
+
+    notelist.renderNotes(notes);
+};
+
 
 
 import Model from './models/note-model';
 
-window.model = Model;
-
 // Callback wil be called, every time the notes get mutated
-Model.stream('notes', notes => {
-    state.notes = notes;
-    notelist.renderNotes(state.notes);
-});
+Model.stream('notes', stateChange);
 
 
 // Function to create test data

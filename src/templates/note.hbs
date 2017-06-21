@@ -1,4 +1,4 @@
-<li class="note {{#if finished}}is-finished{{/if}}" data-note="{{uid}}">
+<li class="note {{#if finishDate}}is-finished{{/if}}" data-note="{{uid}}">
     <div class="note__action">
         <input class="note__finish-checkbox" type="checkbox"{{#if finished}} checked="checked"{{/if}} data-finish-note>
     </div>
@@ -8,17 +8,15 @@
     </div>
     <div class="note__meta">
         <div class="note__importance">
-            <i class="fa fa-star" aria-hidden="true"></i>
-            <i class="fa fa-star" aria-hidden="true"></i>
-            <i class="fa fa-star" aria-hidden="true"></i>
-            <i class="fa fa-star" aria-hidden="true"></i>
-            <i class="fa fa-star" aria-hidden="true"></i>
+            {{#times importance}}
+                <i class="fa fa-star" aria-hidden="true"></i>
+            {{/times}}
         </div>
         <div class="note__duedate">
-            {{#if finished}}
-                Finished: {{finishedFormated}}
+            {{#if finishDate}}
+                Finished: {{finishDateFormatted}}
             {{else}}
-                Due: 20.06.2017
+                Due: {{dueDateFormatted}}
             {{/if}}
         </div>
         <div class="note__edit-wrapper">

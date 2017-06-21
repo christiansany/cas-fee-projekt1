@@ -61,27 +61,55 @@
 	
 	var _moment2 = _interopRequireDefault(_moment);
 	
-	var _note = __webpack_require__(121);
+	var _runtime = __webpack_require__(121);
 	
-	var _note2 = _interopRequireDefault(_note);
+	var _runtime2 = _interopRequireDefault(_runtime);
 	
-	var _themeSwitcher = __webpack_require__(141);
+	var _themeSwitcher = __webpack_require__(140);
 	
-	var _sorter = __webpack_require__(142);
+	var _sorter = __webpack_require__(141);
 	
-	var _pikaday = __webpack_require__(143);
+	var _form = __webpack_require__(142);
 	
-	var _pikaday2 = _interopRequireDefault(_pikaday);
+	var _router = __webpack_require__(145);
 	
-	var _noteModel = __webpack_require__(145);
+	var _noteList = __webpack_require__(146);
+	
+	var _noteModel = __webpack_require__(148);
 	
 	var _noteModel2 = _interopRequireDefault(_noteModel);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// TODO: This controller should not have a copy of the notes
+	_runtime2.default.registerHelper('times', function (n, block) {
+	    var accum = '';
+	    for (var i = 0; i < n; ++i) {
+	        accum += block.fn(i);
+	    }return accum;
+	});
 	
 	// Components
+	
+	// import themeSwitcher from './factories/theme-switcher';
+	// import pubsub from './helpers/pubsub';
+	// import handlebars from 'handlebars';
+	// import handlebars from 'handlebars';
+	// import render from './composites/render';
+	// import { view } from './composites/mvc';
+	/**
+	 * @file Main entry point of Noter, the notesapp to stay organized
+	 *
+	 * @author christian.sany@notch-interactive.com
+	 */
+	
+	// Import polyfills
+	// No polyfills will be used, since this Project doesn't have to support older Browsers
+	
+	// Dependencies
+	
+	
+	// TODO: This controller should not have a copy of the notes
+	
 	var state = {
 	    notes: []
 	};
@@ -97,26 +125,6 @@
 	// }
 	
 	// Instanciate themeSwitcher
-	
-	// import themeSwitcher from './factories/theme-switcher';
-	// import pubsub from './helpers/pubsub';
-	// import handlebars from 'handlebars';
-	// import handlebars from 'handlebars';
-	// import render from './composites/render';
-	// import { view } from './composites/mvc';
-	// const Handlebars = require('handlebars');
-	
-	// Tempaltes -> Are getting laoded via handlebars-loader
-	/**
-	 * @file Main entry point of Noter, the notesapp to stay organized
-	 *
-	 * @author christian.sany@notch-interactive.com
-	 */
-	
-	// Import polyfills
-	// No polyfills will be used, since this Project doesn't have to support older Browsers
-	
-	// Dependencies
 	(0, _themeSwitcher.createThemeSwitcher)(document.querySelector('[data-theme-switcher]'));
 	
 	var sorter = (0, _sorter.createSorter)(document.querySelector('[data-filter]'));
@@ -126,97 +134,37 @@
 	});
 	
 	var showFinishedTrigger = document.querySelector('[data-show-finished]');
-	showFinishedTrigger.addEventListener('change', function (event) {
-	    console.log(event.target.checked);
+	showFinishedTrigger.addEventListener('change', function (e) {
+	    console.log(e.target.checked);
 	});
 	
 	var newNoteTrigger = document.querySelector('[data-new-note]');
-	newNoteTrigger.addEventListener('click', function () {
+	newNoteTrigger.addEventListener('click', function (e) {
+	    e.preventDefault();
 	    router.push('/new-edit');
 	});
 	
-	var createRouter = function createRouter(container) {
-	    var instance = Object.assign({}, (0, _observer2.default)());
+	//
+	// const createRouter = (container) => {
+	//     const instance = Object.assign({}, observer());
+	//
+	//     const views = container.querySelectorAll('[data-route]');
+	//
+	//     instance.push = (viewName) => {
+	//         views.forEach((view) => {
+	//             view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
+	//         });
+	//
+	//         // Doesn't work with browserify
+	//         // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
+	//     };
+	//
+	//     return instance;
+	// };
 	
-	    var views = container.querySelectorAll('[data-route]');
+	var router = (0, _router.createRouter)(document.querySelector('[data-router-outlet]'));
 	
-	    instance.push = function (viewName) {
-	        views.forEach(function (view) {
-	            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
-	        });
-	
-	        // Doesn't work with browserify
-	        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
-	    };
-	
-	    return instance;
-	};
-	
-	var router = createRouter(document.querySelector('[data-router-outlet]'));
-	
-	window.router = router;
-	
-	// import 'pikaday';
-	
-	
-	var createForm = function createForm(container) {
-	    var instance = Object.assign({}, (0, _observer2.default)());
-	
-	    // const form = container;
-	    // const cancleButton = container.querySelector('[data-btn-cancle]');
-	
-	    var elements = {
-	        form: container,
-	        uid: container.querySelector('[data-form-uid]'),
-	        title: container.querySelector('[data-form-title]'),
-	        description: container.querySelector('[data-form-description]'),
-	        importance: container.querySelector('[data-form-importance]'),
-	        due: container.querySelector('[data-form-due]'),
-	        cancleButton: container.querySelector('[data-btn-cancle]')
-	    };
-	
-	    var picker = new _pikaday2.default({
-	        field: elements.due,
-	        format: 'DD.MM.YYYY',
-	        firstDay: 1,
-	        minDate: new Date(),
-	        defaultDate: new Date(),
-	        setDefaultDate: true
-	    });
-	
-	    // console.log(elements.due, picker);
-	
-	    instance.populateFields = function (data) {
-	        elements.uid.value = data.uid;
-	        elements.title.value = data.title;
-	        elements.description.value = data.description;
-	        elements.importance.value = data.importance;
-	        elements.due.value = data.dueFormated;
-	        picker.setMoment(data.due);
-	    };
-	
-	    instance.clear = function () {
-	        elements.uid.value = '';
-	        elements.title.value = '';
-	        elements.description.value = '';
-	        elements.importance.value = '';
-	        elements.due.value = '';
-	        picker.setDate(new Date());
-	    };
-	
-	    elements.form.addEventListener('submit', function (e) {
-	        e.preventDefault();
-	        console.log('here comes fieldvalidation');
-	    });
-	
-	    elements.cancleButton.addEventListener('click', function () {
-	        instance.trigger('cancle');
-	    });
-	
-	    return instance;
-	};
-	
-	var form = createForm(document.querySelector('[data-form]'));
+	var form = (0, _form.createForm)(document.querySelector('[data-form]'));
 	
 	// Subscribe to cancle
 	form.on('cancle', function () {
@@ -230,7 +178,12 @@
 	
 	form.on('submit', function (data) {
 	
-	    console.log('submit got triggered and validation was ok', data);
+	    // Check if an edit was made, or a new Note should be generated
+	    if (data.hasOwnProperty('uid') && data.uid !== '') {
+	        _noteModel2.default.updateNote(data.uid, data);
+	    } else {
+	        _noteModel2.default.addNote(data);
+	    }
 	
 	    // Clear the form
 	    form.clear();
@@ -239,79 +192,46 @@
 	    router.push('/list');
 	});
 	
-	// Notelist Factory
-	var createNoteList = function createNoteList(container) {
-	    var instance = Object.assign({}, (0, _observer2.default)());
-	
-	    var listDelegate = function listDelegate(event) {
-	
-	        var trigger = void 0;
-	        var uid = event.target.closest('[data-note]').getAttribute('data-note');
-	
-	        if ((trigger = event.target.closest('[data-finish-note]')) !== null) {
-	            trigger.checked ? instance.trigger('finish', uid) : instance.trigger('unfinish', uid);
-	        } else if (event.target.closest('[data-note-edit]') !== null) {
-	            instance.trigger('edit', uid);
-	        } else if (event.target.closest('[data-note-delete]') !== null) {
-	            instance.trigger('delete', uid);
-	        }
-	    };
-	
-	    instance.renderNotes = function (notes) {
-	        listContainer.innerHTML = '';
-	
-	        notes.forEach(function (note) {
-	            listContainer.innerHTML += (0, _note2.default)(note);
-	        });
-	    };
-	
-	    var listContainer = container.querySelector('[data-notelist-list]');
-	
-	    listContainer.addEventListener('click', listDelegate);
-	
-	    return instance;
-	};
-	
-	var notelist = createNoteList(document.querySelector('[data-notelist]'));
+	var notelist = (0, _noteList.createNoteList)(document.querySelector('[data-notelist]'));
 	
 	notelist.on('finish', function (uid) {
-	    _noteModel2.default.update(uid, {
-	        finished: new _moment2.default(),
-	        get finishedFormated() {
-	            return this.finished.format('DD.MM.YYYY');
-	        }
+	    _noteModel2.default.updateNote(uid, {
+	        finishDate: new _moment2.default()
 	    });
 	});
 	
 	notelist.on('unfinish', function (uid) {
-	    _noteModel2.default.update(uid, {
-	        finished: false,
-	        get finishdate() {
-	            return '';
-	        }
+	    _noteModel2.default.updateNote(uid, {
+	        finishDate: false
 	    });
 	});
 	
 	notelist.on('edit', function (uid) {
 	
 	    // Populate form fields with Notedata
-	    form.populateFields(state.notes.find(function (n) {
-	        return n.uid === parseInt(uid);
+	    form.populateFields(_noteModel2.default.notes.find(function (n) {
+	        return n.uid === uid;
 	    }));
 	    router.push('/new-edit');
 	});
 	
 	notelist.on('delete', function (uid) {
-	    _noteModel2.default.remove(uid);
+	    _noteModel2.default.removeNote(uid);
 	});
 	
-	window.model = _noteModel2.default;
+	// The state changed, please re-render the list
+	var stateChange = function stateChange() {
+	    var notes = _noteModel2.default.notes;
+	
+	    console.log(sorter.getSort());
+	
+	    // console.log('renders', notes);
+	
+	    notelist.renderNotes(notes);
+	};
 	
 	// Callback wil be called, every time the notes get mutated
-	_noteModel2.default.stream('notes', function (notes) {
-	    state.notes = notes;
-	    notelist.renderNotes(state.notes);
-	});
+	_noteModel2.default.stream('notes', stateChange);
 	
 	// Function to create test data
 	window.genNotes = function () {
@@ -16088,50 +16008,14 @@
 /* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	var Handlebars = __webpack_require__(122);
-	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
-	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
-	    return "is-finished";
-	},"3":function(container,depth0,helpers,partials,data) {
-	    return " checked=\"checked\"";
-	},"5":function(container,depth0,helpers,partials,data) {
-	    var helper;
-	
-	  return "                Finished: "
-	    + container.escapeExpression(((helper = (helper = helpers.finishedFormated || (depth0 != null ? depth0.finishedFormated : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"finishedFormated","hash":{},"data":data}) : helper)))
-	    + "\n";
-	},"7":function(container,depth0,helpers,partials,data) {
-	    return "                Due: 20.06.2017\n";
-	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
-	
-	  return "<li class=\"note "
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finished : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + "\" data-note=\""
-	    + alias4(((helper = (helper = helpers.uid || (depth0 != null ? depth0.uid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uid","hash":{},"data":data}) : helper)))
-	    + "\">\n    <div class=\"note__action\">\n        <input class=\"note__finish-checkbox\" type=\"checkbox\""
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finished : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
-	    + " data-finish-note>\n    </div>\n    <div class=\"note__content\">\n        <p class=\"note__title\">"
-	    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
-	    + "</p>\n        <p class=\"note__description\">"
-	    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
-	    + "</p>\n    </div>\n    <div class=\"note__meta\">\n        <div class=\"note__importance\">\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n            <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n        </div>\n        <div class=\"note__duedate\">\n"
-	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finished : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.program(7, data, 0),"data":data})) != null ? stack1 : "")
-	    + "        </div>\n        <div class=\"note__edit-wrapper\">\n            <a href=\"#\" class=\"note__edit-link\" data-note-edit>\n                <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>&nbsp;&nbsp;bearbeiten\n            </a>\n            &nbsp;&nbsp;\n            <a href=\"#\" class=\"note__delete-link\" data-note-delete>\n                <i class=\"fa fa-trash\" aria-hidden=\"true\"></i>&nbsp;&nbsp;löschen\n            </a>\n        </div>\n    </div>\n</li>\n";
-	},"useData":true});
-
-/***/ }),
-/* 122 */
-/***/ (function(module, exports, __webpack_require__) {
-
 	'use strict';
 	
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(123)['default'];
+	module.exports = __webpack_require__(122)['default'];
 
 /***/ }),
-/* 123 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16157,30 +16041,30 @@
 	  }
 	}
 	
-	var _handlebarsBase = __webpack_require__(124);
+	var _handlebarsBase = __webpack_require__(123);
 	
 	var base = _interopRequireWildcard(_handlebarsBase);
 	
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
 	
-	var _handlebarsSafeString = __webpack_require__(138);
+	var _handlebarsSafeString = __webpack_require__(137);
 	
 	var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
 	
-	var _handlebarsException = __webpack_require__(126);
+	var _handlebarsException = __webpack_require__(125);
 	
 	var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
 	
-	var _handlebarsUtils = __webpack_require__(125);
+	var _handlebarsUtils = __webpack_require__(124);
 	
 	var Utils = _interopRequireWildcard(_handlebarsUtils);
 	
-	var _handlebarsRuntime = __webpack_require__(139);
+	var _handlebarsRuntime = __webpack_require__(138);
 	
 	var runtime = _interopRequireWildcard(_handlebarsRuntime);
 	
-	var _handlebarsNoConflict = __webpack_require__(140);
+	var _handlebarsNoConflict = __webpack_require__(139);
 	
 	var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
 	
@@ -16213,7 +16097,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 124 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16226,17 +16110,17 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
-	var _exception = __webpack_require__(126);
+	var _exception = __webpack_require__(125);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
-	var _helpers = __webpack_require__(127);
+	var _helpers = __webpack_require__(126);
 	
-	var _decorators = __webpack_require__(135);
+	var _decorators = __webpack_require__(134);
 	
-	var _logger = __webpack_require__(137);
+	var _logger = __webpack_require__(136);
 	
 	var _logger2 = _interopRequireDefault(_logger);
 	
@@ -16323,7 +16207,7 @@
 	exports.logger = _logger2['default'];
 
 /***/ }),
-/* 125 */
+/* 124 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -16453,7 +16337,7 @@
 	}
 
 /***/ }),
-/* 126 */
+/* 125 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -16511,7 +16395,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 127 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16524,31 +16408,31 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _helpersBlockHelperMissing = __webpack_require__(128);
+	var _helpersBlockHelperMissing = __webpack_require__(127);
 	
 	var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
 	
-	var _helpersEach = __webpack_require__(129);
+	var _helpersEach = __webpack_require__(128);
 	
 	var _helpersEach2 = _interopRequireDefault(_helpersEach);
 	
-	var _helpersHelperMissing = __webpack_require__(130);
+	var _helpersHelperMissing = __webpack_require__(129);
 	
 	var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
 	
-	var _helpersIf = __webpack_require__(131);
+	var _helpersIf = __webpack_require__(130);
 	
 	var _helpersIf2 = _interopRequireDefault(_helpersIf);
 	
-	var _helpersLog = __webpack_require__(132);
+	var _helpersLog = __webpack_require__(131);
 	
 	var _helpersLog2 = _interopRequireDefault(_helpersLog);
 	
-	var _helpersLookup = __webpack_require__(133);
+	var _helpersLookup = __webpack_require__(132);
 	
 	var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
 	
-	var _helpersWith = __webpack_require__(134);
+	var _helpersWith = __webpack_require__(133);
 	
 	var _helpersWith2 = _interopRequireDefault(_helpersWith);
 	
@@ -16563,14 +16447,14 @@
 	}
 
 /***/ }),
-/* 128 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('blockHelperMissing', function (context, options) {
@@ -16606,7 +16490,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 129 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16620,9 +16504,9 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
-	var _exception = __webpack_require__(126);
+	var _exception = __webpack_require__(125);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
@@ -16708,7 +16592,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 130 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16720,7 +16604,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _exception = __webpack_require__(126);
+	var _exception = __webpack_require__(125);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
@@ -16739,14 +16623,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 131 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('if', function (conditional, options) {
@@ -16772,7 +16656,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 132 */
+/* 131 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -16802,7 +16686,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 133 */
+/* 132 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -16818,14 +16702,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 134 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
 	exports['default'] = function (instance) {
 	  instance.registerHelper('with', function (context, options) {
@@ -16855,7 +16739,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 135 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16868,7 +16752,7 @@
 	  return obj && obj.__esModule ? obj : { 'default': obj };
 	}
 	
-	var _decoratorsInline = __webpack_require__(136);
+	var _decoratorsInline = __webpack_require__(135);
 	
 	var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
 	
@@ -16877,14 +16761,14 @@
 	}
 
 /***/ }),
-/* 136 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
 	exports['default'] = function (instance) {
 	  instance.registerDecorator('inline', function (fn, props, container, options) {
@@ -16910,14 +16794,14 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 137 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	exports.__esModule = true;
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
 	var logger = {
 	  methodMap: ['debug', 'info', 'warn', 'error'],
@@ -16961,7 +16845,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 138 */
+/* 137 */
 /***/ (function(module, exports) {
 
 	// Build out our basic SafeString type
@@ -16980,7 +16864,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 139 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17014,15 +16898,15 @@
 	  }
 	}
 	
-	var _utils = __webpack_require__(125);
+	var _utils = __webpack_require__(124);
 	
 	var Utils = _interopRequireWildcard(_utils);
 	
-	var _exception = __webpack_require__(126);
+	var _exception = __webpack_require__(125);
 	
 	var _exception2 = _interopRequireDefault(_exception);
 	
-	var _base = __webpack_require__(124);
+	var _base = __webpack_require__(123);
 	
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
@@ -17305,7 +17189,7 @@
 	}
 
 /***/ }),
-/* 140 */
+/* 139 */
 /***/ (function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/* global window */
@@ -17330,7 +17214,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ }),
-/* 141 */
+/* 140 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -17377,7 +17261,7 @@
 	};
 
 /***/ }),
-/* 142 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17396,13 +17280,23 @@
 	// Sorter Factory
 	var createSorter = exports.createSorter = function createSorter(container) {
 	    var instance = Object.assign({}, (0, _observer2.default)());
+	    var state = {
+	        sort: ''
+	    };
 	
 	    var setSort = function setSort(sort) {
 	        instance.trigger('sortChange', sort);
 	
+	        state.sort = sort;
+	
 	        triggers.forEach(function (trigger) {
 	            trigger.classList.toggle('is-active', trigger.getAttribute('data-filter-trigger') === sort);
 	        });
+	    };
+	
+	    // Expose state.sort
+	    instance.getSort = function () {
+	        return state.sort;
 	    };
 	
 	    var triggers = container.querySelectorAll('[data-filter-trigger]');
@@ -17414,7 +17308,95 @@
 	        });
 	    });
 	
+	    // Set the first active sort to the first sorter btn found
+	    setSort(triggers[0].getAttribute('data-filter-trigger'));
+	
 	    // Some serious exposing happens here
+	    return instance;
+	};
+
+/***/ }),
+/* 142 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createForm = undefined;
+	
+	var _observer = __webpack_require__(2);
+	
+	var _observer2 = _interopRequireDefault(_observer);
+	
+	var _pikaday = __webpack_require__(143);
+	
+	var _pikaday2 = _interopRequireDefault(_pikaday);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// Form Factory
+	var createForm = exports.createForm = function createForm(container) {
+	    var instance = Object.assign({}, (0, _observer2.default)());
+	
+	    var elements = {
+	        form: container,
+	        uid: container.querySelector('[data-form-uid]'),
+	        title: container.querySelector('[data-form-title]'),
+	        description: container.querySelector('[data-form-description]'),
+	        importance: container.querySelector('[data-form-importance]'),
+	        dueDate: container.querySelector('[data-form-due]'),
+	        cancleButton: container.querySelector('[data-btn-cancle]')
+	    };
+	
+	    var picker = new _pikaday2.default({
+	        field: elements.dueDate,
+	        format: 'DD.MM.YYYY',
+	        firstDay: 1,
+	        minDate: new Date(),
+	        defaultDate: new Date(),
+	        setDefaultDate: true
+	    });
+	
+	    instance.populateFields = function (data) {
+	        elements.uid.value = data.uid;
+	        elements.title.value = data.title;
+	        elements.description.value = data.description;
+	        elements.importance.value = data.importance;
+	        elements.dueDate.value = data.dueDateFormatted;
+	        picker.setMoment(data.dueDate);
+	    };
+	
+	    instance.clear = function () {
+	        elements.uid.value = '';
+	        elements.title.value = '';
+	        elements.description.value = '';
+	        elements.importance.value = '';
+	        elements.dueDate.value = '';
+	        picker.setDate(new Date());
+	    };
+	
+	    elements.form.addEventListener('submit', function (e) {
+	        e.preventDefault();
+	
+	        var data = {
+	            title: elements.title.value,
+	            description: elements.description.value,
+	            importance: elements.importance.value,
+	            dueDate: elements.dueDate.value
+	        };
+	
+	        if (elements.uid.value !== '') data.uid = elements.uid.value;
+	
+	        instance.trigger('submit', data);
+	    });
+	
+	    elements.cancleButton.addEventListener('click', function (e) {
+	        e.preventDefault();
+	        instance.trigger('cancle');
+	    });
+	
 	    return instance;
 	};
 
@@ -18594,6 +18576,132 @@
 
 /***/ }),
 /* 145 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var createRouter = exports.createRouter = function createRouter(container) {
+	    var instance = Object.assign({});
+	
+	    var views = container.querySelectorAll('[data-route]');
+	
+	    instance.push = function (viewName) {
+	        views.forEach(function (view) {
+	            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
+	        });
+	
+	        // Doesn't work with browserify
+	        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
+	    };
+	
+	    return instance;
+	};
+
+/***/ }),
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.createNoteList = undefined;
+	
+	var _observer = __webpack_require__(2);
+	
+	var _observer2 = _interopRequireDefault(_observer);
+	
+	var _note = __webpack_require__(147);
+	
+	var _note2 = _interopRequireDefault(_note);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// NoteList Factory
+	var createNoteList = exports.createNoteList = function createNoteList(container) {
+	    var instance = Object.assign({}, (0, _observer2.default)());
+	
+	    var listDelegate = function listDelegate(event) {
+	
+	        var trigger = void 0;
+	        var uid = event.target.closest('[data-note]').getAttribute('data-note');
+	
+	        if ((trigger = event.target.closest('[data-finish-note]')) !== null) {
+	            trigger.checked ? instance.trigger('finish', uid) : instance.trigger('unfinish', uid);
+	        } else if (event.target.closest('[data-note-edit]') !== null) {
+	            instance.trigger('edit', uid);
+	        } else if (event.target.closest('[data-note-delete]') !== null) {
+	            instance.trigger('delete', uid);
+	        }
+	    };
+	
+	    instance.renderNotes = function (notes) {
+	        listContainer.innerHTML = '';
+	
+	        notes.forEach(function (note) {
+	            listContainer.innerHTML += (0, _note2.default)(note);
+	        });
+	    };
+	
+	    var listContainer = container.querySelector('[data-notelist-list]');
+	
+	    listContainer.addEventListener('click', listDelegate);
+	
+	    return instance;
+	};
+	
+	// Tempaltes -> Are getting laoded via handlebars-loader
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(121);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    return "is-finished";
+	},"3":function(container,depth0,helpers,partials,data) {
+	    return " checked=\"checked\"";
+	},"5":function(container,depth0,helpers,partials,data) {
+	    return "                <i class=\"fa fa-star\" aria-hidden=\"true\"></i>\n";
+	},"7":function(container,depth0,helpers,partials,data) {
+	    var helper;
+	
+	  return "                Finished: "
+	    + container.escapeExpression(((helper = (helper = helpers.finishDateFormatted || (depth0 != null ? depth0.finishDateFormatted : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"finishDateFormatted","hash":{},"data":data}) : helper)))
+	    + "\n";
+	},"9":function(container,depth0,helpers,partials,data) {
+	    var helper;
+	
+	  return "                Due: "
+	    + container.escapeExpression(((helper = (helper = helpers.dueDateFormatted || (depth0 != null ? depth0.dueDateFormatted : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : (container.nullContext || {}),{"name":"dueDateFormatted","hash":{},"data":data}) : helper)))
+	    + "\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : (container.nullContext || {}), alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+	
+	  return "<li class=\"note "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "\" data-note=\""
+	    + alias4(((helper = (helper = helpers.uid || (depth0 != null ? depth0.uid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uid","hash":{},"data":data}) : helper)))
+	    + "\">\n    <div class=\"note__action\">\n        <input class=\"note__finish-checkbox\" type=\"checkbox\""
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finished : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + " data-finish-note>\n    </div>\n    <div class=\"note__content\">\n        <p class=\"note__title\">"
+	    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "</p>\n        <p class=\"note__description\">"
+	    + alias4(((helper = (helper = helpers.description || (depth0 != null ? depth0.description : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"description","hash":{},"data":data}) : helper)))
+	    + "</p>\n    </div>\n    <div class=\"note__meta\">\n        <div class=\"note__importance\">\n"
+	    + ((stack1 = (helpers.times || (depth0 && depth0.times) || alias2).call(alias1,(depth0 != null ? depth0.importance : depth0),{"name":"times","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "        </div>\n        <div class=\"note__duedate\">\n"
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(7, data, 0),"inverse":container.program(9, data, 0),"data":data})) != null ? stack1 : "")
+	    + "        </div>\n        <div class=\"note__edit-wrapper\">\n            <a href=\"#\" class=\"note__edit-link\" data-note-edit>\n                <i class=\"fa fa-pencil\" aria-hidden=\"true\"></i>&nbsp;&nbsp;bearbeiten\n            </a>\n            &nbsp;&nbsp;\n            <a href=\"#\" class=\"note__delete-link\" data-note-delete>\n                <i class=\"fa fa-trash\" aria-hidden=\"true\"></i>&nbsp;&nbsp;löschen\n            </a>\n        </div>\n    </div>\n</li>\n";
+	},"useData":true});
+
+/***/ }),
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18610,6 +18718,8 @@
 	
 	var _moment2 = _interopRequireDefault(_moment);
 	
+	var _note = __webpack_require__(149);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } // Dependencies
@@ -18617,7 +18727,9 @@
 	
 	// NoteModel factory
 	var NoteModel = function NoteModel() {
-	    var self = {};
+	    var self = {
+	        notes: []
+	    };
 	    var notes = []; // private variable
 	    var ob = (0, _observer2.default)(); // generate private observer for model internal communication
 	
@@ -18626,27 +18738,37 @@
 	
 	        // Fetch notes from localStorage
 	        // This will later be replaced by the ajaxcall
-	        var temp = JSON.parse(localStorage.getItem('notes'));
+	        var temp = JSON.parse(localStorage.getItem('notes')).map(function (note) {
+	            return new _note.Note(note);
+	        });
+	
+	        console.log('stuff', JSON.parse(localStorage.getItem('notes')));
 	
 	        // Check if notes found in localStorage
 	        if (temp !== null) {
-	            // notes = temp;
-	            notes.push.apply(notes, _toConsumableArray(temp));
+	            var _self$notes;
+	
+	            (_self$notes = self.notes).push.apply(_self$notes, _toConsumableArray(temp));
 	
 	            // Set the internal uid to the highest found note
-	            notes.forEach(function (note) {
+	            self.notes.forEach(function (note) {
 	                return uid = uid < note.uid ? note.uid : uid;
 	            });
 	        }
 	
 	        // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-	        ob.trigger('notes', notes, 'fetched');
+	        ob.trigger('notes', self.notes, 'fetched');
 	
 	        // Set fetched to true, since the notes are fetched now
 	        fetched = true;
 	    };
 	
 	    var save = function save() {
+	
+	        var notes = self.notes.map(function (note) {
+	            return _note.Note.serialize(note);
+	        });
+	
 	        // Save notes to localStorage
 	        localStorage.setItem('notes', JSON.stringify(notes));
 	    };
@@ -18654,70 +18776,58 @@
 	    // Internal flag
 	    var fetched = false; // Set to true when initial fetching for the data is finished
 	
-	    var uid = -1;
+	    var uid = 0;
 	
 	    // Public functions
-	    self.add = function (data) {
-	        // TODO: add checking of object
-	        // TODO: performe ajax like task (ajax comes later)
-	
+	    self.addNote = function (data) {
 	        // Creature unique id for note and assign it to the note
 	        uid++;
-	        var note = Object.assign({}, {
-	            uid: uid,
-	            created: new _moment2.default(),
-	            finished: false
-	        }, data);
 	
-	        return new Promise(function (resolve, reject) {
-	            try {
+	        var note = new _note.Note(Object.assign({}, data, {
+	            uid: '' + uid
+	        }));
 	
-	                // Push on notes
-	                notes.push(note);
-	
-	                // Saves current notes to localStorage
-	                save();
-	
-	                // Trigger stream subscribtions
-	                ob.trigger('notes', notes, 'added');
-	
-	                // Resolve promise with
-	                resolve(note);
-	            } catch (e) {
-	
-	                // in case the later ajax call fails
-	                reject(e);
-	            }
-	        });
-	    };
-	
-	    self.update = function (uid, data) {
-	
-	        var note = notes.find(function (n) {
-	            return n.uid === parseInt(uid);
-	        });
-	
-	        Object.assign(note, data);
+	        // Push on notes
+	        self.notes.push(note);
 	
 	        // Saves current notes to localStorage
 	        save();
 	
 	        // Trigger stream subscribtions
-	        ob.trigger('notes', notes, 'updated');
+	        ob.trigger('notes', self.notes, 'added');
 	    };
 	
-	    self.remove = function (uid) {
+	    self.updateNote = function (uid, data) {
+	
+	        var index = self.notes.findIndex(function (n) {
+	            return n.uid === uid;
+	        });
+	
+	        self.notes[index] = new _note.Note(data);
+	
+	        // console.log(note);
+	        //
+	        // Object.assign(note, data);
+	
+	        // Saves current notes to localStorage
+	        save();
+	
+	        // Trigger stream subscribtions
+	        ob.trigger('notes', self.notes, 'updated');
+	    };
+	
+	    self.removeNote = function (uid) {
 	
 	        // Iteration stops at first return of true
-	        notes.splice(notes.findIndex(function (note) {
-	            return note.uid === parseInt(uid);
+	        self.notes.splice(self.notes.findIndex(function (note) {
+	            return note.uid === uid;
 	        }), 1);
 	
 	        // Saves current notes to localStorage
 	        save();
 	
 	        // Trigger stream subscribtions
-	        ob.trigger('notes', notes, 'removed');
+	        ob.trigger('notes', self.notes, 'removed');
 	    };
 	
 	    /**
@@ -18753,6 +18863,101 @@
 	};
 	
 	exports.default = NoteModel();
+
+/***/ }),
+/* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Note = undefined;
+	
+	var _moment = __webpack_require__(3);
+	
+	var _moment2 = _interopRequireDefault(_moment);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Note = exports.Note = function Note(obj) {
+	
+	    if (obj.hasOwnProperty('uid')) {
+	        this._uid = obj.uid;
+	    }
+	
+	    // _uid is 'private' (haha) and should never be overwritten, therefor make a read only property for uid
+	    Object.defineProperty(this, 'uid', {
+	        get: function get() {
+	            return this._uid ? this._uid : 0; // returns 0 when no _uid is set
+	        }
+	    });
+	
+	    Object.defineProperty(this, 'createdDateFormatted', {
+	        get: function get() {
+	            return this.createdDate.format('DD.MM.YYYY'); // TODO: return '' when no createdDate is set
+	        }
+	    });
+	
+	    Object.defineProperty(this, 'dueDateFormatted', {
+	        get: function get() {
+	            return this.dueDate ? this.dueDate.format('DD.MM.YYYY') : ''; // TODO: return '' when no dueDate is set
+	        },
+	        set: function set(val) {
+	            this.dueDate = new _moment2.default(val, 'DD.MM.YYYY');
+	        }
+	    });
+	
+	    Object.defineProperty(this, 'finishDateFormatted', {
+	        get: function get() {
+	            return this.finishDate ? this.finishDate.format('DD.MM.YYYY') : '';
+	        }
+	    });
+	
+	    this.title = obj.title;
+	    this.description = obj.description;
+	    this.importance = obj.importance;
+	
+	    if (obj.hasOwnProperty('createdDate')) {
+	        this.createdDate = new _moment2.default(obj.createdDate);
+	    } else {
+	        this.createdDate = new _moment2.default();
+	    }
+	
+	    if (obj.hasOwnProperty('dueDate') && typeof obj.dueDate !== 'boolean') {
+	        this.dueDate = new _moment2.default(obj.dueDate, 'DD.MM.YYYY'); // The due date is set via DD.MM.YYYY format, unlike other date related params
+	    } else {
+	        this.dueDate = false; // This should never happen
+	    }
+	
+	    if (obj.hasOwnProperty('finishDate') && typeof obj.finishDate !== 'boolean') {
+	        this.finishDate = new _moment2.default(obj.finishDate);
+	    } else {
+	        this.finishDate = false;
+	    }
+	};
+	
+	// Serialize a note to be compatible with JSON
+	Note.serialize = function (note) {
+	    var obj = {};
+	
+	    // Check if uid is set on the Note
+	    obj.uid = note.uid;
+	    obj.title = note.title;
+	    obj.description = note.description;
+	    obj.importance = note.importance;
+	    obj.createdDate = note.createdDate.format(); // Converts Moment object to UTC String
+	    obj.dueDate = note.dueDate.format('DD.MM.YYYY'); // Converts Moment object to UTC String
+	    obj.finishDate = note.finishDate ? note.finishDate.format() : false; // Converts Moment object to UTC String
+	
+	    return obj;
+	};
+	
+	// Parsing an object from JSON and returning a new Note
+	Note.parse = function (note) {
+	    return new Note(note);
+	};
 
 /***/ })
 /******/ ]);
