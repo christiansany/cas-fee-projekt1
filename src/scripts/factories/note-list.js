@@ -1,11 +1,21 @@
 import observer from '../libs/observer';
 
-// Tempaltes -> Are getting laoded via handlebars-loader
+// Compiled via handlebars-loader
 import noteTemplate from '../../templates/note.hbs';
 
 // NoteList Factory
 export const createNoteList = container => {
     const instance = Object.assign({}, observer()); // Object composition
+
+    const showNotesContainer = () => {
+        listContainer.style.display = 'block';
+        noResultsContainer.style.display = 'none';
+    };
+
+    const showNoResultsContainer = () => {
+        listContainer.style.display = 'none';
+        noResultsContainer.style.display = 'block';
+    };
 
     const listDelegate = e => {
 
@@ -25,6 +35,10 @@ export const createNoteList = container => {
     };
 
     instance.renderNotes = (notes) => {
+        (notes.length !== 0) ? showNotesContainer() : showNoResultsContainer();
+
+        console.log(notes);
+
         listContainer.innerHTML = '';
 
         notes.forEach(note => {
@@ -33,8 +47,11 @@ export const createNoteList = container => {
     };
 
     const listContainer = container.querySelector('[data-notelist-list]');
+    const noResultsContainer = container.querySelector('[data-notelist-empty-message]');
 
     listContainer.addEventListener('click', listDelegate);
+
+    noResultsContainer.style.display = 'none';
 
     return instance;
 };

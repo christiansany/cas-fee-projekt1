@@ -8,4 +8,16 @@
         margin: rem(20px) 0 0;
         list-style-type: none;
     }
+
+    &__empty-message {
+        padding: rem(24px) 0;
+        margin: rem(20px) 0;
+
+        font-size: 1.5rem;
+        line-height: 1.16667;
+        letter-spacing: -.025rem;
+        color: var(--font-color-light);
+        font-weight: 600;
+        text-overflow: ellipsis;
+    }
 }

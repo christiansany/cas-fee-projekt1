@@ -7,9 +7,7 @@
         <meta name="description" content="Noter - Get organised using the best notesapp in the world.">
         <meta name="keywords" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!-- TODO: Place favicon.ico in the root directory -->
-
+        <link rel="icon" href="favicon.png"/>
         <link rel="stylesheet" href="./build/styles/main.css">
     </head>
     <body>
@@ -81,6 +79,9 @@
                                     <ul class="notelist__list" data-notelist-list>
                                         <!-- Notes will be rendered here from the handlebars template -->
                                     </ul>
+                                    <div class="notelist__empty-message" data-notelist-empty-message>
+                                        Unfortunately, you have no notes
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,24 +105,24 @@
                     <div class="grid__container">
                         <div class="grid__row">
                             <div class="grid__col-xs-12">
-                                <form action="/" method="post" data-form>
+                                <form class="form" action="/" method="post" data-form>
                                     <input type="hidden" name="uid" id="uid" data-form-uid>
 
-                                    <div class="formrow">
-                                        <label for="title">Title *</label>
-                                        <input type="text" name="title" id="title" required data-form-title>
+                                    <div class="form__formrow">
+                                        <label class="form__label" for="title">Title *</label>
+                                        <input class="form__input" type="text" name="title" id="title" required data-form-title>
                                     </div>
 
-                                    <div class="formrow">
-                                        <label for="description">Description</label>
-                                        <textarea name="description" id="description" cols="30" rows="10" data-form-description></textarea>
+                                    <div class="form__formrow">
+                                        <label class="form__label" for="description">Description</label>
+                                        <textarea class="form__textarea" name="description" id="description" cols="30" rows="10" data-form-description></textarea>
                                     </div>
 
                                     <div class="grid__row">
                                         <div class="grid__col-xs-6">
-                                            <div class="formrow">
-                                                <label for="importance">Importance</label>
-                                                <select name="importance" id="importance" data-form-importance>
+                                            <div class="form__formrow">
+                                                <label class="form__label" for="importance">Importance</label>
+                                                <select class="form__select" name="importance" id="importance" data-form-importance>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
                                                     <option value="3">3</option>
@@ -130,13 +131,11 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="grid__row">
                                         <div class="grid__col-xs-6">
-                                            <div class="formrow">
-                                                <label for="duedate">Duedate</label>
-                                                <input type="text" name="duedate" id="duedate" data-form-due>
+                                            <div class="form__formrow">
+                                                <label class="form__label" for="duedate">Duedate</label>
+                                                <input class="form__input" type="text" name="duedate" id="duedate" data-form-due>
                                             </div>
                                         </div>
                                     </div>

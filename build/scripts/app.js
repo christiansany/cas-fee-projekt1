@@ -86,11 +86,11 @@
 	 * @author christian.sany@notch-interactive.com
 	 */
 	
-	// TODO: 0 notes view
-	// TODO: defer laoding the fonts for faster first paint
-	// TODO: Change title on edit page according for edit mode or new note mode
-	// TODO: Add favicon
+	// TODO: optional - defer laoding the fonts for faster first paint
 	// TODO: Add documentation in readme file on how to set up this project
+	// TODO: Make a node server and implement model layer there
+	// TODO: Make a layout for edit page
+	// TODO: change grid system to flex and remove responsively
 	
 	// Dependencies
 	// import observer from './libs/observer';
@@ -116,11 +116,11 @@
 	var form = (0, _form.createForm)(document.querySelector('[data-form]'));
 	
 	/**
-	 * stateChanged
+	 * updateList
 	 *
 	 * Tells the NoteList to render the Notes because of some change
 	 */
-	var stateChanged = function stateChanged() {
+	var updateList = function updateList() {
 	    var sort = sorter.getSort();
 	    var notes = _noteModel2.default.notes.filter(filter.showFinished() ? function () {
 	        return true;
@@ -147,7 +147,7 @@
 	
 	sorter.on('changed', function (sort) {
 	    localStorage.setItem('sort', sort); // Save sort to localStorage
-	    stateChanged(); // Rerenders NoteList
+	    updateList();
 	});
 	
 	// Load activeFilter from last visit (if visited before)
@@ -158,11 +158,11 @@
 	
 	filter.on('changed', function (activeFilter) {
 	    localStorage.setItem('activeFilter', activeFilter); // Save activeFilter to localStorage
-	    stateChanged(); // Rerenders NoteList
+	    updateList();
 	});
 	
-	// filter.on('changed', stateChanged);
-	_noteModel2.default.stream('notes', stateChanged); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
+	// filter.on('changed', updateList);
+	_noteModel2.default.stream('notes', updateList); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
 	
 	
 	// const showFinishedTrigger = document.querySelector('[data-show-finished]');
@@ -17706,6 +17706,16 @@
 	var createNoteList = exports.createNoteList = function createNoteList(container) {
 	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
 	
+	    var showNotesContainer = function showNotesContainer() {
+	        listContainer.style.display = 'block';
+	        noResultsContainer.style.display = 'none';
+	    };
+	
+	    var showNoResultsContainer = function showNoResultsContainer() {
+	        listContainer.style.display = 'none';
+	        noResultsContainer.style.display = 'block';
+	    };
+	
 	    var listDelegate = function listDelegate(e) {
 	
 	        var trigger = void 0;
@@ -17724,6 +17734,10 @@
 	    };
 	
 	    instance.renderNotes = function (notes) {
+	        notes.length !== 0 ? showNotesContainer() : showNoResultsContainer();
+	
+	        console.log(notes);
+	
 	        listContainer.innerHTML = '';
 	
 	        notes.forEach(function (note) {
@@ -17732,13 +17746,16 @@
 	    };
 	
 	    var listContainer = container.querySelector('[data-notelist-list]');
+	    var noResultsContainer = container.querySelector('[data-notelist-empty-message]');
 	
 	    listContainer.addEventListener('click', listDelegate);
+	
+	    noResultsContainer.style.display = 'none';
 	
 	    return instance;
 	};
 	
-	// Tempaltes -> Are getting laoded via handlebars-loader
+	// Compiled via handlebars-loader
 
 /***/ }),
 /* 147 */

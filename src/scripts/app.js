@@ -4,11 +4,11 @@
  * @author christian.sany@notch-interactive.com
  */
 
-// TODO: 0 notes view
-// TODO: defer laoding the fonts for faster first paint
-// TODO: Change title on edit page according for edit mode or new note mode
-// TODO: Add favicon
+// TODO: optional - defer laoding the fonts for faster first paint
 // TODO: Add documentation in readme file on how to set up this project
+// TODO: Make a node server and implement model layer there
+// TODO: Make a layout for edit page
+// TODO: change grid system to flex and remove responsively
 
 // Dependencies
 // import observer from './libs/observer';
@@ -43,11 +43,11 @@ const noteList = createNoteList(document.querySelector('[data-notelist]'));
 const form = createForm(document.querySelector('[data-form]'));
 
 /**
- * stateChanged
+ * updateList
  *
  * Tells the NoteList to render the Notes because of some change
  */
-const stateChanged = () => {
+const updateList = () => {
     const sort = sorter.getSort();
     const notes = Notes.notes
         .filter((filter.showFinished()) ? () => true : note => !note.finishDate)
@@ -72,7 +72,7 @@ if(sort) {
 
 sorter.on('changed', sort => {
     localStorage.setItem('sort', sort); // Save sort to localStorage
-    stateChanged(); // Rerenders NoteList
+    updateList();
 });
 
 // Load activeFilter from last visit (if visited before)
@@ -83,11 +83,11 @@ if(activeFilter) {
 
 filter.on('changed', activeFilter => {
     localStorage.setItem('activeFilter', activeFilter); // Save activeFilter to localStorage
-    stateChanged(); // Rerenders NoteList
+    updateList();
 });
 
-// filter.on('changed', stateChanged);
-Notes.stream('notes', stateChanged); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
+// filter.on('changed', updateList);
+Notes.stream('notes', updateList); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
 
 
 

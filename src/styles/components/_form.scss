@@ -1,0 +1,40 @@
+/* ==|====================
+   Component / Form
+   ======================= */
+
+.form {
+
+    &__formrow {
+        margin-bottom: rem(20px);
+    }
+
+    &__label {
+        display: block;
+        font-size: rem(12px);
+        line-height: (16 / 12);
+        letter-spacing: .4px;
+        padding-top: rem(12px);
+        padding-bottom: rem(12px);
+        text-transform: uppercase;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    &__input,
+    &__select,
+    &__textarea {
+
+    }
+
+    &__input {
+
+    }
+
+    &__select {
+
+    }
+
+    &__textarea {
+
+    }
+}
