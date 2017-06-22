@@ -4,8 +4,6 @@
  * @author christian.sany@notch-interactive.com
  */
 
-// TODO: Add documentation in readme file on how to set up this project
-// TODO: Make a node server and implement model layer there
 // TODO: Refactor this file here to be 'prettier'
 
 // Dependencies
@@ -84,16 +82,7 @@ filter.on('changed', activeFilter => {
     updateList();
 });
 
-// filter.on('changed', updateList);
 Notes.stream('notes', updateList); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
-
-
-
-
-// const showFinishedTrigger = document.querySelector('[data-show-finished]');
-// showFinishedTrigger.addEventListener('change', e => {
-//     console.log(e.target.checked);
-// });
 
 const newNoteTrigger = document.querySelector('[data-new-note]');
 newNoteTrigger.addEventListener('click', e => {
@@ -115,19 +104,18 @@ themeSwitcher.on('changed', theme => {
     localStorage.setItem('theme', theme);
 });
 
-
-
-// Subscribe to cancle
+// Subscribe to form cancle
 form.on('cancle', () => {
     form.clear(); // Clear the form
     router.push('/list'); // Route back to the list view
 });
 
+// Subscribe to form submit
 form.on('submit', data => {
 
     // Check if an edit was made, or a new Note should be generated
-    if(data.hasOwnProperty('uid') && data.uid !== '') {
-        Notes.updateNote(data.uid, data);
+    if(data.hasOwnProperty('_id') && data._id !== '') {
+        Notes.updateNote(data._id, data);
     } else {
         Notes.addNote(data);
     }
@@ -136,74 +124,65 @@ form.on('submit', data => {
     router.push('/list'); // Route back to the list view
 });
 
-
-
-
-
-
-
-
-
-
-
-noteList.on('finish', uid => {
-    Notes.updateNote(uid, {
+// Subscribe to the delegate when a note should be finished
+noteList.on('finish', _id => {
+    Notes.updateNote(_id, {
         finishDate: new Moment()
     });
 });
 
-noteList.on('unfinish', uid => {
-    Notes.updateNote(uid, {
+// Subscribe to the delegate when a note should be unfinished
+noteList.on('unfinish', _id => {
+    Notes.updateNote(_id, {
         finishDate: false
     });
 });
 
-noteList.on('edit', uid => {
+// Subscribe to the delegate when a note should be edited
+noteList.on('edit', _id => {
 
     // Populate form fields with Notedata
-    form.populateFields(Notes.notes.find(n => n.uid === uid));
+    form.populateFields(Notes.notes.find(n => n._id === _id));
 
     document.querySelector('[data-edit-new-title]').innerHTML = 'Edit Note';
 
     router.push('/new-edit');
 });
 
+// Subscribe to the delegate when a note should be removed
 noteList.on('delete', Notes.removeNote);
 
-
-
-
-
 // Function to create test data
-window.genNotes = function() {
+window.generateNotes = function() {
     Notes.addNote({
-        title: 'Explore the street art of East London 1',
+        title: 'Explore the street art of London 1',
         description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
         importance: 2,
         dueDate: '21.08.2017'
     });
 
-    // Notes.addNote({
-    //     title: 'Explore the street art of East London 2',
-    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-    //     importance: 4,
-    //     dueDate: '26.08.2017'
-    // });
-    //
-    // Notes.addNote({
-    //     title: 'Explore the street art of East London 3',
-    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-    //     importance: 3,
-    //     dueDate: '20.08.2017'
-    // });
-    //
-    // Notes.addNote({
-    //     title: 'Explore the street art of East London 4',
-    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-    //     importance: 5,
-    //     dueDate: '25.08.2017'
-    // });
+    Notes.addNote({
+        title: 'Explore the street art of London 2',
+        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+        importance: 4,
+        dueDate: '26.08.2017'
+    });
+
+    Notes.addNote({
+        title: 'Explore the street art of London 3',
+        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+        importance: 3,
+        dueDate: '20.08.2017'
+    });
+
+    Notes.addNote({
+        title: 'Explore the street art of London 4',
+        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+        importance: 5,
+        dueDate: '25.08.2017'
+    });
 };
 
-// Notes
-// import NoteModel from './models/note-model';
+// Tells sneaky people how to add test-data :)
+console.log(`Hello there :D
+If you want to create test data, you can execute generateNotes() in the console, this will generate 4 notes for you.`);

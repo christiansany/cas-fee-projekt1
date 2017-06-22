@@ -1,6 +1,6 @@
 # Noter
 
-Demo (obsolete): [https://christiansany.github.io/cas-fee-projekt1/](https://christiansany.github.io/cas-fee-projekt1/)
+TODO: Integrate polling or websocket for pulling/pushing new notes/changes from the server.
 
 Noter is due to used ES6 features as well as CSS variables not cross-browser compatible. For the best user experience, use [Google Chrome Version 59](https://www.google.de/chrome/browser/desktop/index.html?brand=CHBD&gclid=EAIaIQobChMIxemG2ZLR1AIVBDPTCh1aYASTEAAYASAAEgK3M_D_BwE) or newer.
 
@@ -8,8 +8,8 @@ Noter is due to used ES6 features as well as CSS variables not cross-browser com
 
 To avoid unwanted errors, please check that you local environment is configured as follows:
 
-Node: 6.9.5<br>
-NPM: 3.10.10
+Node: 6.9.5 - *To switch the node version, best use a node version manager such as [n](https://www.npmjs.com/package/n)*<br>
+NPM: 3.10.10 - *This version doesn't matter as much as the node version*
 
 ## Setup
 

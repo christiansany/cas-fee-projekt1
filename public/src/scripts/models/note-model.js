@@ -1,6 +1,5 @@
 // Dependencies
 import observer from '../libs/observer';
-// import Moment from 'moment';
 import { Note } from './note';
 
 // NoteModel factory
@@ -8,110 +7,113 @@ const NoteModel = () => {
     const self = {
         notes: []
     };
-    const notes = []; // private variable
     const ob = observer(); // generate private observer for model internal communication
+    let fetched = false; // Set to true when initial fetching for the data is finished
 
     // Private functions
     const fetchNotes = () => {
 
-        fetch('/notes')
-            .then(res => res.json())
-            .then(data => {
-                const notes = data.notes.map(note => new Note(note));
+        // We just assume there would never be an error, errorhandling could of course be added
+        return new Promise(resolve => {
+            fetch('/notes')
+                .then(res => res.json())
+                .then(data => {
+                    const notes = data.notes.map(note => new Note(note));
 
-                self.notes.push(...notes);
+                    self.notes.push(...notes);
 
-                ob.trigger('notes', self.notes, 'fetched');
+                    // Set fetched to true, since the notes are fetched now
+                    fetched = true;
 
-                // Set fetched to true, since the notes are fetched now
-                fetched = true;
-            });
+                    ob.trigger('notes', self.notes, 'fetched');
 
-        // // Fetch notes from localStorage
-        // // This will later be replaced by the ajaxcall
-        // const temp = JSON.parse(localStorage.getItem('notes'));
-        //
-        // // Check if notes found in localStorage
-        // if (temp !== null) {
-        //
-        //     const notes = temp.map(note => new Note(note));
-        //
-        //     self.notes.push(...notes);
-        //
-        //     // Set the internal uid to the highest found note
-        //     self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
-        // }
-        //
-        // // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-        // ob.trigger('notes', self.notes, 'fetched');
-        //
-        // // Set fetched to true, since the notes are fetched now
-        // fetched = true;
+                    resolve();
+                });
+        });
     };
-
-    const save = () => {
-
-        const notes = self.notes.map(note => Note.serialize(note));
-
-        // Save notes to localStorage
-        localStorage.setItem('notes', JSON.stringify(notes));
-    };
-
-    // Internal flag
-    let fetched = false; // Set to true when initial fetching for the data is finished
-
-    let uid = 0;
 
     // Public functions
-    self.addNote = (data) => {
-        const note = new Note(data);
+    self.addNote = data => {
 
-        const params = {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(Note.serialize(note))
-        };
+        // We just assume there would never be an error, errorhandling could of course be added
+        return new Promise(resolve => {
+            const note = new Note(data);
 
-        fetch('/notes', params)
-            .then(res => res.json())
-            .then((data) => {
-                self.notes.push(new Note(data));
-                ob.trigger('notes', self.notes, 'added');
-            });
+            const params = {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Note.serialize(note))
+            };
+
+            fetch('/notes', params)
+                .then(res => res.json())
+                .then(data => {
+                    self.notes.push(new Note(data));
+                    ob.trigger('notes', self.notes, 'added');
+
+                    resolve();
+                });
+        });
     };
 
-    self.updateNote = (uid, data) => {
+    self.updateNote = (_id, data) => {
 
-        const note = self.notes.find(n => n.uid === uid);
+        // We just assume there would never be an error, errorhandling could of course be added
+        return new Promise(resolve => {
+            const note = self.notes.find(n => n._id === _id);
 
-        for (var key in data) {
+            for (var key in data) {
 
-            // Check for both the data and the note to have the property to change it (also, filter out uid changes, since this is prohibited)
-            if (data.hasOwnProperty(key) && note.hasOwnProperty(key) && key !== 'uid') {
-                note[key] = data[key];
+                // Check for both the data and the note to have the property to change it (also, filter out _id changes, since this is prohibited)
+                if (data.hasOwnProperty(key) && note.hasOwnProperty(key) && key !== '_id') {
+                    note[key] = data[key];
+                }
             }
-        }
 
-        // Saves current notes to localStorage
-        save();
+            const params = {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(Note.serialize(note))
+            };
 
-        // Trigger stream subscribtions
-        ob.trigger('notes', self.notes, 'updated');
+            fetch('/notes/' + note._id, params)
+                .then(res => res.json())
+                .then(() => {
+                    ob.trigger('notes', self.notes, 'updated');
+
+                    resolve();
+                });
+        });
     };
 
-    self.removeNote = (uid) => {
+    self.removeNote = (_id) => {
 
-        // Iteration stops at first return of true
-        self.notes.splice(self.notes.findIndex(note => note.uid === uid), 1);
+        // We just assume there would never be an error, errorhandling could of course be added
+        return new Promise(resolve => {
+            const params = {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            };
 
-        // Saves current notes to localStorage
-        save();
+            fetch('/notes/' + _id, params)
+                .then(res => res.json())
+                .then(data => {
+                    self.notes.splice(self.notes.findIndex(note => note._id === data._id), 1);
 
-        // Trigger stream subscribtions
-        ob.trigger('notes', self.notes, 'removed');
+                    ob.trigger('notes', self.notes, 'removed');
+
+                    resolve();
+                });
+        });
     };
 
     /**
@@ -131,7 +133,7 @@ const NoteModel = () => {
             if (fetched) {
 
                 // Call callback immediatly
-                callback(notes);
+                callback(self.notes);
             }
 
             // Subscribe to stream, callback will be called every time a note gets added, removed or mutated

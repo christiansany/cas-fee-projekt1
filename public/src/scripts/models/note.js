@@ -2,16 +2,16 @@ import Moment from 'moment';
 
 export const Note = function(obj) {
 
-    if (obj.hasOwnProperty('uid')) {
-        this._uid = obj.uid;
+    if (obj.hasOwnProperty('_id')) {
+        this._id = obj._id;
     }
 
-    // _uid is 'private' (haha) and should never be overwritten, therefor make a read only property for uid
-    Object.defineProperty(this, 'uid', {
-        get() {
-            return (this._uid) ? this._uid : 0; // returns 0 when no _uid is set
-        }
-    });
+    // // _uid is 'private' (haha) and should never be overwritten, therefor make a read only property for uid
+    // Object.defineProperty(this, '_id', {
+    //     get() {
+    //         return (this._uid) ? this._uid : 0; // returns 0 when no _uid is set
+    //     }
+    // });
 
     Object.defineProperty(this, 'createdDateFormatted', {
         get() {
@@ -70,7 +70,10 @@ Note.serialize = (note) => {
     const obj = {};
 
     // Check if uid is set on the Note
-    obj.uid = note.uid;
+    if (note.hasOwnProperty('_id')) {
+        obj._id = note._id;
+    }
+    // obj._id = note._id;
     obj.title = note.title;
     obj.description = note.description;
     obj.importance = note.importance;

@@ -74,11 +74,9 @@ export const copyTemplates = () => {
 // Build task
 export const build = gulp.series(cleanStatic, gulp.parallel(
     buildStyles,
-    // lintStyles, TODO: implement linting
+    copyTemplates,
     buildScripts,
-    // lintScripts, TODO: implement linting
-    copyFonts,
-    copyTemplates
+    copyFonts
 ));
 
 // Watch task

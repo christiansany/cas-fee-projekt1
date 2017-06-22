@@ -5,7 +5,6 @@ const app = express();
 // Import Routes
 const noteRoutes = require('./routes/note-routes');
 
-// app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(noteRoutes);
 app.use(express.static(__dirname + '/public'));

@@ -86,8 +86,6 @@
 	 * @author christian.sany@notch-interactive.com
 	 */
 	
-	// TODO: Add documentation in readme file on how to set up this project
-	// TODO: Make a node server and implement model layer there
 	// TODO: Refactor this file here to be 'prettier'
 	
 	// Dependencies
@@ -159,14 +157,7 @@
 	    updateList();
 	});
 	
-	// filter.on('changed', updateList);
 	_noteModel2.default.stream('notes', updateList); // Subscribes to Notes beeing mutated and instantly calls the callback when registering
-	
-	
-	// const showFinishedTrigger = document.querySelector('[data-show-finished]');
-	// showFinishedTrigger.addEventListener('change', e => {
-	//     console.log(e.target.checked);
-	// });
 	
 	var newNoteTrigger = document.querySelector('[data-new-note]');
 	newNoteTrigger.addEventListener('click', function (e) {
@@ -188,17 +179,18 @@
 	    localStorage.setItem('theme', theme);
 	});
 	
-	// Subscribe to cancle
+	// Subscribe to form cancle
 	form.on('cancle', function () {
 	    form.clear(); // Clear the form
 	    router.push('/list'); // Route back to the list view
 	});
 	
+	// Subscribe to form submit
 	form.on('submit', function (data) {
 	
 	    // Check if an edit was made, or a new Note should be generated
-	    if (data.hasOwnProperty('uid') && data.uid !== '') {
-	        _noteModel2.default.updateNote(data.uid, data);
+	    if (data.hasOwnProperty('_id') && data._id !== '') {
+	        _noteModel2.default.updateNote(data._id, data);
 	    } else {
 	        _noteModel2.default.addNote(data);
 	    }
@@ -207,23 +199,26 @@
 	    router.push('/list'); // Route back to the list view
 	});
 	
-	noteList.on('finish', function (uid) {
-	    _noteModel2.default.updateNote(uid, {
+	// Subscribe to the delegate when a note should be finished
+	noteList.on('finish', function (_id) {
+	    _noteModel2.default.updateNote(_id, {
 	        finishDate: new _moment2.default()
 	    });
 	});
 	
-	noteList.on('unfinish', function (uid) {
-	    _noteModel2.default.updateNote(uid, {
+	// Subscribe to the delegate when a note should be unfinished
+	noteList.on('unfinish', function (_id) {
+	    _noteModel2.default.updateNote(_id, {
 	        finishDate: false
 	    });
 	});
 	
-	noteList.on('edit', function (uid) {
+	// Subscribe to the delegate when a note should be edited
+	noteList.on('edit', function (_id) {
 	
 	    // Populate form fields with Notedata
 	    form.populateFields(_noteModel2.default.notes.find(function (n) {
-	        return n.uid === uid;
+	        return n._id === _id;
 	    }));
 	
 	    document.querySelector('[data-edit-new-title]').innerHTML = 'Edit Note';
@@ -231,41 +226,42 @@
 	    router.push('/new-edit');
 	});
 	
+	// Subscribe to the delegate when a note should be removed
 	noteList.on('delete', _noteModel2.default.removeNote);
 	
 	// Function to create test data
-	window.genNotes = function () {
+	window.generateNotes = function () {
 	    _noteModel2.default.addNote({
-	        title: 'Explore the street art of East London 1',
+	        title: 'Explore the street art of London 1',
 	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
 	        importance: 2,
 	        dueDate: '21.08.2017'
 	    });
 	
-	    // Notes.addNote({
-	    //     title: 'Explore the street art of East London 2',
-	    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-	    //     importance: 4,
-	    //     dueDate: '26.08.2017'
-	    // });
-	    //
-	    // Notes.addNote({
-	    //     title: 'Explore the street art of East London 3',
-	    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-	    //     importance: 3,
-	    //     dueDate: '20.08.2017'
-	    // });
-	    //
-	    // Notes.addNote({
-	    //     title: 'Explore the street art of East London 4',
-	    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-	    //     importance: 5,
-	    //     dueDate: '25.08.2017'
-	    // });
+	    _noteModel2.default.addNote({
+	        title: 'Explore the street art of London 2',
+	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+	        importance: 4,
+	        dueDate: '26.08.2017'
+	    });
+	
+	    _noteModel2.default.addNote({
+	        title: 'Explore the street art of London 3',
+	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+	        importance: 3,
+	        dueDate: '20.08.2017'
+	    });
+	
+	    _noteModel2.default.addNote({
+	        title: 'Explore the street art of London 4',
+	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+	        importance: 5,
+	        dueDate: '25.08.2017'
+	    });
 	};
 	
-	// Notes
-	// import NoteModel from './models/note-model';
+	// Tells sneaky people how to add test-data :)
+	console.log('Hello there :D\nIf you want to create test data, you can execute generateNotes() in the console, this will generate 4 notes for you.');
 
 /***/ }),
 /* 2 */
@@ -17082,128 +17078,127 @@
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } } // Dependencies
 	
-	// import Moment from 'moment';
-	
 	
 	// NoteModel factory
 	var NoteModel = function NoteModel() {
 	    var self = {
 	        notes: []
 	    };
-	    var notes = []; // private variable
 	    var ob = (0, _observer2.default)(); // generate private observer for model internal communication
+	    var fetched = false; // Set to true when initial fetching for the data is finished
 	
 	    // Private functions
 	    var fetchNotes = function fetchNotes() {
 	
-	        fetch('/notes').then(function (res) {
-	            return res.json();
-	        }).then(function (data) {
-	            var _self$notes;
+	        // We just assume there would never be an error, errorhandling could of course be added
+	        return new Promise(function (resolve) {
+	            fetch('/notes').then(function (res) {
+	                return res.json();
+	            }).then(function (data) {
+	                var _self$notes;
 	
-	            var notes = data.notes.map(function (note) {
-	                return new _note.Note(note);
+	                var notes = data.notes.map(function (note) {
+	                    return new _note.Note(note);
+	                });
+	
+	                (_self$notes = self.notes).push.apply(_self$notes, _toConsumableArray(notes));
+	
+	                // Set fetched to true, since the notes are fetched now
+	                fetched = true;
+	
+	                ob.trigger('notes', self.notes, 'fetched');
+	
+	                resolve();
 	            });
-	
-	            (_self$notes = self.notes).push.apply(_self$notes, _toConsumableArray(notes));
-	
-	            ob.trigger('notes', self.notes, 'fetched');
-	
-	            // Set fetched to true, since the notes are fetched now
-	            fetched = true;
 	        });
-	
-	        // // Fetch notes from localStorage
-	        // // This will later be replaced by the ajaxcall
-	        // const temp = JSON.parse(localStorage.getItem('notes'));
-	        //
-	        // // Check if notes found in localStorage
-	        // if (temp !== null) {
-	        //
-	        //     const notes = temp.map(note => new Note(note));
-	        //
-	        //     self.notes.push(...notes);
-	        //
-	        //     // Set the internal uid to the highest found note
-	        //     self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
-	        // }
-	        //
-	        // // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-	        // ob.trigger('notes', self.notes, 'fetched');
-	        //
-	        // // Set fetched to true, since the notes are fetched now
-	        // fetched = true;
 	    };
-	
-	    var save = function save() {
-	
-	        var notes = self.notes.map(function (note) {
-	            return _note.Note.serialize(note);
-	        });
-	
-	        // Save notes to localStorage
-	        localStorage.setItem('notes', JSON.stringify(notes));
-	    };
-	
-	    // Internal flag
-	    var fetched = false; // Set to true when initial fetching for the data is finished
-	
-	    var uid = 0;
 	
 	    // Public functions
 	    self.addNote = function (data) {
-	        var note = new _note.Note(data);
 	
-	        var params = {
-	            method: 'POST',
-	            headers: {
-	                'Accept': 'application/json',
-	                'Content-Type': 'application/json'
-	            },
-	            body: JSON.stringify(_note.Note.serialize(note))
-	        };
+	        // We just assume there would never be an error, errorhandling could of course be added
+	        return new Promise(function (resolve) {
+	            var note = new _note.Note(data);
 	
-	        fetch('/notes', params).then(function (res) {
-	            return res.json();
-	        }).then(function (data) {
-	            self.notes.push(new _note.Note(data));
-	            ob.trigger('notes', self.notes, 'added');
+	            var params = {
+	                method: 'POST',
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-Type': 'application/json'
+	                },
+	                body: JSON.stringify(_note.Note.serialize(note))
+	            };
+	
+	            fetch('/notes', params).then(function (res) {
+	                return res.json();
+	            }).then(function (data) {
+	                self.notes.push(new _note.Note(data));
+	                ob.trigger('notes', self.notes, 'added');
+	
+	                resolve();
+	            });
 	        });
 	    };
 	
-	    self.updateNote = function (uid, data) {
+	    self.updateNote = function (_id, data) {
 	
-	        var note = self.notes.find(function (n) {
-	            return n.uid === uid;
-	        });
+	        // We just assume there would never be an error, errorhandling could of course be added
+	        return new Promise(function (resolve) {
+	            var note = self.notes.find(function (n) {
+	                return n._id === _id;
+	            });
 	
-	        for (var key in data) {
+	            for (var key in data) {
 	
-	            // Check for both the data and the note to have the property to change it (also, filter out uid changes, since this is prohibited)
-	            if (data.hasOwnProperty(key) && note.hasOwnProperty(key) && key !== 'uid') {
-	                note[key] = data[key];
+	                // Check for both the data and the note to have the property to change it (also, filter out _id changes, since this is prohibited)
+	                if (data.hasOwnProperty(key) && note.hasOwnProperty(key) && key !== '_id') {
+	                    note[key] = data[key];
+	                }
 	            }
-	        }
 	
-	        // Saves current notes to localStorage
-	        save();
+	            var params = {
+	                method: 'PUT',
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-Type': 'application/json'
+	                },
+	                body: JSON.stringify(_note.Note.serialize(note))
+	            };
 	
-	        // Trigger stream subscribtions
-	        ob.trigger('notes', self.notes, 'updated');
+	            fetch('/notes/' + note._id, params).then(function (res) {
+	                return res.json();
+	            }).then(function () {
+	                ob.trigger('notes', self.notes, 'updated');
+	
+	                resolve();
+	            });
+	        });
 	    };
 	
-	    self.removeNote = function (uid) {
+	    self.removeNote = function (_id) {
 	
-	        // Iteration stops at first return of true
-	        self.notes.splice(self.notes.findIndex(function (note) {
-	            return note.uid === uid;
-	        }), 1);
+	        // We just assume there would never be an error, errorhandling could of course be added
+	        return new Promise(function (resolve) {
+	            var params = {
+	                method: 'DELETE',
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-Type': 'application/json'
+	                }
+	            };
 	
-	        // Saves current notes to localStorage
-	        save();
+	            fetch('/notes/' + _id, params).then(function (res) {
+	                return res.json();
+	            }).then(function (data) {
+	                self.notes.splice(self.notes.findIndex(function (note) {
+	                    return note._id === data._id;
+	                }), 1);
 	
-	        // Trigger stream subscribtions
-	        ob.trigger('notes', self.notes, 'removed');
+	                ob.trigger('notes', self.notes, 'removed');
+	
+	                resolve();
+	            });
+	        });
 	    };
 	
 	    /**
@@ -17223,7 +17218,7 @@
 	            if (fetched) {
 	
 	                // Call callback immediatly
-	                callback(notes);
+	                callback(self.notes);
 	            }
 	
 	            // Subscribe to stream, callback will be called every time a note gets added, removed or mutated
@@ -17397,16 +17392,16 @@
 	
 	var Note = exports.Note = function Note(obj) {
 	
-	    if (obj.hasOwnProperty('uid')) {
-	        this._uid = obj.uid;
+	    if (obj.hasOwnProperty('_id')) {
+	        this._id = obj._id;
 	    }
 	
-	    // _uid is 'private' (haha) and should never be overwritten, therefor make a read only property for uid
-	    Object.defineProperty(this, 'uid', {
-	        get: function get() {
-	            return this._uid ? this._uid : 0; // returns 0 when no _uid is set
-	        }
-	    });
+	    // // _uid is 'private' (haha) and should never be overwritten, therefor make a read only property for uid
+	    // Object.defineProperty(this, '_id', {
+	    //     get() {
+	    //         return (this._uid) ? this._uid : 0; // returns 0 when no _uid is set
+	    //     }
+	    // });
 	
 	    Object.defineProperty(this, 'createdDateFormatted', {
 	        get: function get() {
@@ -17462,7 +17457,10 @@
 	    var obj = {};
 	
 	    // Check if uid is set on the Note
-	    obj.uid = note.uid;
+	    if (note.hasOwnProperty('_id')) {
+	        obj._id = note._id;
+	    }
+	    // obj._id = note._id;
 	    obj.title = note.title;
 	    obj.description = note.description;
 	    obj.importance = note.importance;
@@ -17788,7 +17786,7 @@
 	  return "<li class=\"note "
 	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + "\" data-note=\""
-	    + alias4(((helper = (helper = helpers.uid || (depth0 != null ? depth0.uid : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"uid","hash":{},"data":data}) : helper)))
+	    + alias4(((helper = (helper = helpers._id || (depth0 != null ? depth0._id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"_id","hash":{},"data":data}) : helper)))
 	    + "\">\n    <div class=\"note__action\">\n        <input class=\"note__finish-checkbox\" type=\"checkbox\""
 	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.finishDate : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
 	    + " data-finish-note>\n    </div>\n    <div class=\"note__content\">\n        <p class=\"note__title\">"
@@ -17829,7 +17827,7 @@
 	
 	    var elements = {
 	        form: container,
-	        uid: container.querySelector('[data-form-uid]'),
+	        id: container.querySelector('[data-form-id]'),
 	        title: container.querySelector('[data-form-title]'),
 	        description: container.querySelector('[data-form-description]'),
 	        importance: container.querySelector('[data-form-importance]'),
@@ -17847,7 +17845,7 @@
 	    });
 	
 	    instance.populateFields = function (data) {
-	        elements.uid.value = data.uid;
+	        elements.id.value = data._id;
 	        elements.title.value = data.title;
 	        elements.description.value = data.description;
 	        elements.importance.value = data.importance;
@@ -17856,7 +17854,7 @@
 	    };
 	
 	    instance.clear = function () {
-	        elements.uid.value = '';
+	        elements.id.value = '';
 	        elements.title.value = '';
 	        elements.description.value = '';
 	        elements.importance.value = '1';
@@ -17874,7 +17872,7 @@
 	            dueDate: elements.dueDate.value
 	        };
 	
-	        if (elements.uid.value !== '') data.uid = elements.uid.value;
+	        if (elements.id.value !== '') data._id = elements.id.value;
 	
 	        instance.trigger('submit', data);
 	    });

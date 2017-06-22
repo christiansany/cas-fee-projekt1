@@ -7,7 +7,7 @@ export const createForm = container => {
 
     const elements = {
         form: container,
-        uid: container.querySelector('[data-form-uid]'),
+        id: container.querySelector('[data-form-id]'),
         title: container.querySelector('[data-form-title]'),
         description: container.querySelector('[data-form-description]'),
         importance: container.querySelector('[data-form-importance]'),
@@ -25,7 +25,7 @@ export const createForm = container => {
     });
 
     instance.populateFields = data => {
-        elements.uid.value = data.uid;
+        elements.id.value = data._id;
         elements.title.value = data.title;
         elements.description.value = data.description;
         elements.importance.value = data.importance;
@@ -34,7 +34,7 @@ export const createForm = container => {
     };
 
     instance.clear = () => {
-        elements.uid.value = '';
+        elements.id.value = '';
         elements.title.value = '';
         elements.description.value = '';
         elements.importance.value = '1';
@@ -52,8 +52,8 @@ export const createForm = container => {
             dueDate: elements.dueDate.value
         };
 
-        if (elements.uid.value !== '')
-            data.uid = elements.uid.value;
+        if (elements.id.value !== '')
+            data._id = elements.id.value;
 
         instance.trigger('submit', data);
     });
