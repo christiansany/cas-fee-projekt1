@@ -1,9 +1,23 @@
-# Notesmanager
+# Noter
 
 Demo: [https://christiansany.github.io/cas-fee-projekt1/](https://christiansany.github.io/cas-fee-projekt1/)
 
-This Notesmanager is due to used ES6 features as well as CSS variables not cross-browser compatible. For the best experience user Google Chrome Version 59 or newer.
+Noter is due to used ES6 features as well as CSS variables not cross-browser compatible. For the best experience user [Google Chrome Version 59](https://www.google.de/chrome/browser/desktop/index.html?brand=CHBD&gclid=EAIaIQobChMIxemG2ZLR1AIVBDPTCh1aYASTEAAYASAAEgK3M_D_BwE) or newer.
+
+## Environment
+
+To avoid unwanted errors, please check that you local environment is configured as follows:
+
+Node: 6.9.5
+NPM: 3.10.10
 
 ## Setup
 
-// TODO: erklären wie das setup funktioniert mit gulp usw
+`$ npm install --only=production` Installs needed dependencies
+`$ npm start` Start the node-server
+
+## Development setup
+
+`$ npm install` Installs needed dependencies
+`$ npm start` Start the node-server
+`$ npm run dev` Starts the taskrunner (execute this in a separate terminal window)

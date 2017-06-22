@@ -13,7 +13,7 @@
     <body>
         <div class="grid__container">
             <div class="grid__row">
-                <div class="grid__col-xs-12">
+                <div class="grid__col-12">
                     <div class="theme-switcher" data-theme-switcher>
                         <span class="theme-switcher__label">Theme</span>
 
@@ -35,7 +35,7 @@
                 <header>
                     <div class="grid__container">
                         <div class="grid__row">
-                            <div class="grid__col-xs-12">
+                            <div class="grid__col-12">
                                 <p class="pagetitle">
                                     <span class="pagetitle__highlight">Noter</span> Get organised using the best notesapp in the world.
                                 </p>
@@ -46,7 +46,7 @@
                 <div class="content">
                     <div class="grid__container">
                         <div class="grid__row">
-                            <div class="grid__col-xs-12">
+                            <div class="grid__col-12">
 
                                 <div class="action-bar">
                                     <ul class="filter" data-filter>
@@ -64,17 +64,19 @@
                                         </li>
                                     </ul>
 
-                                    <button class="btn btn-small" data-new-note>+ New Note</button>
+                                    <div class="action-bar__right">
+                                        <div class="show-next">
+                                            <input class="show-next__checkbox" type="checkbox" id="show-finished" data-show-finished>
+                                            <label class="show-next__label" for="show-finished">Show finished</label>
+                                        </div>
 
-                                    <div class="show-next">
-                                        <input class="show-next__checkbox" type="checkbox" id="show-finished" data-show-finished>
-                                        <label class="show-next__label" for="show-finished">Show finished</label>
+                                        <button class="btn" data-new-note>+ New Note</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="grid__row">
-                            <div class="grid__col-xs-12">
+                            <div class="grid__col-12">
                                 <div class="notelist" data-notelist>
                                     <ul class="notelist__list" data-notelist-list>
                                         <!-- Notes will be rendered here from the handlebars template -->
@@ -93,7 +95,7 @@
                 <header>
                     <div class="grid__container">
                         <div class="grid__row">
-                            <div class="grid__col-xs-12">
+                            <div class="grid__col-12">
                                 <p class="pagetitle">
                                     <span class="pagetitle__highlight" data-edit-new-title>New Note</span>
                                 </p>
@@ -104,25 +106,21 @@
                 <div class="content">
                     <div class="grid__container">
                         <div class="grid__row">
-                            <div class="grid__col-xs-12">
+                            <div class="grid__col-12">
                                 <form class="form" action="/" method="post" data-form>
                                     <input type="hidden" name="uid" id="uid" data-form-uid>
 
-                                    <div class="form__formrow">
-                                        <label class="form__label" for="title">Title *</label>
-                                        <input class="form__input" type="text" name="title" id="title" required data-form-title>
-                                    </div>
-
-                                    <div class="form__formrow">
-                                        <label class="form__label" for="description">Description</label>
-                                        <textarea class="form__textarea" name="description" id="description" cols="30" rows="10" data-form-description></textarea>
-                                    </div>
-
                                     <div class="grid__row">
-                                        <div class="grid__col-xs-6">
+                                        <div class="grid__col-4">
                                             <div class="form__formrow">
-                                                <label class="form__label" for="importance">Importance</label>
-                                                <select class="form__select" name="importance" id="importance" data-form-importance>
+                                                <label class="form__label" for="title">Title *</label>
+                                                <input class="form__input" type="text" name="title" id="title" required data-form-title>
+                                            </div>
+                                        </div>
+                                        <div class="grid__col-4">
+                                            <div class="form__formrow form__formrow--select">
+                                                <label class="form__label" for="importance">Importance *</label>
+                                                <select class="form__select" name="importance" id="importance" data-form-importance required>
                                                     <option value="1">1</option>
                                                     <option value="2">2</option>
                                                     <option value="3">3</option>
@@ -132,17 +130,23 @@
                                             </div>
                                         </div>
 
-                                        <div class="grid__col-xs-6">
-                                            <div class="form__formrow">
-                                                <label class="form__label" for="duedate">Duedate</label>
-                                                <input class="form__input" type="text" name="duedate" id="duedate" data-form-due>
+                                        <div class="grid__col-4">
+                                            <div class="form__formrow form__formrow--date">
+                                                <label class="form__label" for="duedate">Duedate *</label>
+                                                <input class="form__input form__input--date" type="text" name="duedate" id="duedate" data-form-due required>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <button type="button" data-btn-cancle>Cancle that Note stuff here</button>
-                                    <button type="submit" data-btn-submit>Submiiiit</button>
+                                    <div class="form__formrow">
+                                        <label class="form__label" for="description">Description</label>
+                                        <textarea class="form__textarea" name="description" id="description" cols="30" rows="10" data-form-description></textarea>
+                                    </div>
 
+                                    <div class="form__btnrow">
+                                        <button class="btn btn--grey" type="button" data-btn-cancle>Cancle</button>
+                                        <button class="btn" type="submit" data-btn-submit>Save Note</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>

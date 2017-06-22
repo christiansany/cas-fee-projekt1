@@ -2,10 +2,48 @@
    Component / Form
    ======================= */
 
-.form {
+$input-height: 40px;
 
+%input-style {
+    display: block;
+    border-radius: rem(3px);
+    height: rem($input-height);
+    width: 100%;
+    appearance: none;
+    border: 1px solid var(--color-borders);
+    background-color: var(--main-bg-color);
+    color: var(--font-color);
+    font-size: rem(16px);
+    font-weight: 300;
+    padding: rem(7px) rem(10px);
+    font-family: $font-family-primary;
+}
+
+%icon {
+    position: absolute;
+    height: rem(20px);
+    width: rem(20px);
+    color: var(--font-color);
+    bottom: rem($input-height / 2);
+    right: rem(10px);
+    pointer-events: none;
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    text-rendering: auto;
+    font-size: rem(18px);
+    transform: translateY(50%);
+    line-height: (20 / 18);
+    text-align: center;
+}
+
+.form {
     &__formrow {
         margin-bottom: rem(20px);
+    }
+
+    &__btnrow {
+        display: flex;
+        justify-content: space-between;
     }
 
     &__label {
@@ -23,18 +61,29 @@
     &__input,
     &__select,
     &__textarea {
-
-    }
-
-    &__input {
-
-    }
-
-    &__select {
-
+        @extend %input-style;
     }
 
     &__textarea {
+        height: rem(250px);
+        resize: vertical;
+    }
 
+    &__formrow--select {
+        position: relative;
+
+        &:after {
+            @extend %icon;
+            content: "\f107";
+        }
+    }
+
+    &__formrow--date {
+        position: relative;
+
+        &:after {
+            @extend %icon;
+            content: "\f073";
+        }
     }
 }

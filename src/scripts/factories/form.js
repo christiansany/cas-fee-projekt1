@@ -37,7 +37,7 @@ export const createForm = container => {
         elements.uid.value = '';
         elements.title.value = '';
         elements.description.value = '';
-        elements.importance.value = '';
+        elements.importance.value = '1';
         elements.dueDate.value = '';
         picker.setDate(new Date());
     };

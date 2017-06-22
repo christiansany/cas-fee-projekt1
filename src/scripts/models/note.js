@@ -15,13 +15,13 @@ export const Note = function(obj) {
 
     Object.defineProperty(this, 'createdDateFormatted', {
         get() {
-            return this.createdDate.format('DD.MM.YYYY'); // TODO: return '' when no createdDate is set
+            return (this.createdDate) ? this.createdDate.format('DD.MM.YYYY') : '';
         }
     });
 
     Object.defineProperty(this, 'dueDateFormatted', {
         get() {
-            return (this.dueDate) ? this.dueDate.format('DD.MM.YYYY') : ''; // TODO: return '' when no dueDate is set
+            return (this.dueDate) ? this.dueDate.format('DD.MM.YYYY') : '';
         },
         set(val) {
             this.dueDate = new Moment(val, 'DD.MM.YYYY');
@@ -58,20 +58,11 @@ export const Note = function(obj) {
 
     this.dueDate = obj.dueDate;
 
-    // if (obj.hasOwnProperty('dueDate') && typeof obj.dueDate !== 'boolean') {
-    //     this.dueDate = new Moment(obj.dueDate, 'DD.MM.YYYY'); // The due date is set via DD.MM.YYYY format, unlike other date related params
-    // } else {
-    //     this.dueDate = false; // This should never happen
-    // }
-
     if (obj.hasOwnProperty('finishDate') && typeof obj.finishDate !== 'boolean') {
         this.finishDate = new Moment(obj.finishDate);
     } else {
         this.finishDate = false;
     }
-    //
-    // if(obj.hasOwnProperty('dueDateFormatted'))
-    //     this.dueDateFormatted = obj.dueDateFormatted;
 };
 
 // Serialize a note to be compatible with JSON

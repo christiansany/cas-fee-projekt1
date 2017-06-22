@@ -13,6 +13,7 @@ body {
     --font-color: $color-black;
     --font-color-light: $color-offblack;
     --color-borders: $color-grey;
+    --color-borders-darken: darken($color-grey, 6%);
 
     --color-primary: $color-primary-light;
     --color-primary-darken: darken($color-primary-light, 6%);
@@ -32,6 +33,7 @@ body {
         --font-color: $color-white;
         --font-color-light: $color-light-grey;
         --color-borders: $color-offblack;
+        --color-borders-darken: darken($color-offblack, 6%);
 
         --color-primary: $color-primary-dark;
         --color-primary-darken: darken($color-primary-dark, 6%);

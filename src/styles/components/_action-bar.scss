@@ -8,14 +8,11 @@
 
     border-bottom: 1px solid var(--color-borders);
     overflow: hidden;
+    display: flex;
+    justify-content: space-between;
 
-    .filter {
-        float: left;
-    }
-
-    .btn,
-    .show-next {
-        float: right;
+    &__right {
+        display: flex;
     }
 
     .btn {

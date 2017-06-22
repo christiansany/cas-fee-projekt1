@@ -86,11 +86,9 @@
 	 * @author christian.sany@notch-interactive.com
 	 */
 	
-	// TODO: optional - defer laoding the fonts for faster first paint
 	// TODO: Add documentation in readme file on how to set up this project
 	// TODO: Make a node server and implement model layer there
-	// TODO: Make a layout for edit page
-	// TODO: change grid system to flex and remove responsively
+	// TODO: Refactor this file here to be 'prettier'
 	
 	// Dependencies
 	// import observer from './libs/observer';
@@ -17398,13 +17396,13 @@
 	
 	    Object.defineProperty(this, 'createdDateFormatted', {
 	        get: function get() {
-	            return this.createdDate.format('DD.MM.YYYY'); // TODO: return '' when no createdDate is set
+	            return this.createdDate ? this.createdDate.format('DD.MM.YYYY') : '';
 	        }
 	    });
 	
 	    Object.defineProperty(this, 'dueDateFormatted', {
 	        get: function get() {
-	            return this.dueDate ? this.dueDate.format('DD.MM.YYYY') : ''; // TODO: return '' when no dueDate is set
+	            return this.dueDate ? this.dueDate.format('DD.MM.YYYY') : '';
 	        },
 	        set: function set(val) {
 	            this.dueDate = new _moment2.default(val, 'DD.MM.YYYY');
@@ -17438,20 +17436,11 @@
 	
 	    this.dueDate = obj.dueDate;
 	
-	    // if (obj.hasOwnProperty('dueDate') && typeof obj.dueDate !== 'boolean') {
-	    //     this.dueDate = new Moment(obj.dueDate, 'DD.MM.YYYY'); // The due date is set via DD.MM.YYYY format, unlike other date related params
-	    // } else {
-	    //     this.dueDate = false; // This should never happen
-	    // }
-	
 	    if (obj.hasOwnProperty('finishDate') && typeof obj.finishDate !== 'boolean') {
 	        this.finishDate = new _moment2.default(obj.finishDate);
 	    } else {
 	        this.finishDate = false;
 	    }
-	    //
-	    // if(obj.hasOwnProperty('dueDateFormatted'))
-	    //     this.dueDateFormatted = obj.dueDateFormatted;
 	};
 	
 	// Serialize a note to be compatible with JSON
@@ -17858,7 +17847,7 @@
 	        elements.uid.value = '';
 	        elements.title.value = '';
 	        elements.description.value = '';
-	        elements.importance.value = '';
+	        elements.importance.value = '1';
 	        elements.dueDate.value = '';
 	        picker.setDate(new Date());
 	    };

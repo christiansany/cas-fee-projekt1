@@ -2,9 +2,6 @@
    Main
    ======================= */
 
-// TODO: download fonts and include local fonts
-@import url('https://fonts.googleapis.com/css?family=Montserrat:300,500');
-
 // Settings
 @import "settings/fonts";
 @import "settings/var";
@@ -21,8 +18,6 @@
 @import "base/base";
 @import "fontawesome/font-awesome";
 
-// Elements
-
 // Components
 @import "components/section";
 @import "components/theme-switcher";
@@ -35,7 +30,3 @@
 @import "components/note";
 @import "components/pikaday";
 @import "components/form";
-
-// Atoms
-
-// Trumps

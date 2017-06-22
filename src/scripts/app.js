@@ -4,11 +4,9 @@
  * @author christian.sany@notch-interactive.com
  */
 
-// TODO: optional - defer laoding the fonts for faster first paint
 // TODO: Add documentation in readme file on how to set up this project
 // TODO: Make a node server and implement model layer there
-// TODO: Make a layout for edit page
-// TODO: change grid system to flex and remove responsively
+// TODO: Refactor this file here to be 'prettier'
 
 // Dependencies
 // import observer from './libs/observer';
