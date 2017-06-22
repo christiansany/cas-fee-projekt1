@@ -4,10 +4,7 @@
  * @author christian.sany@notch-interactive.com
  */
 
-// TODO: Refactor this file here to be 'prettier'
-
 // Dependencies
-// import observer from './libs/observer';
 import Moment from 'moment';
 import Handlebars from 'handlebars/runtime';
 

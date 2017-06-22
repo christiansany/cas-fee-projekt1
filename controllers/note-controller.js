@@ -8,9 +8,9 @@ module.exports.getNotes = function(req, res) {
                 notes: notes
             }));
         })
-        .catch(function() {
+        .catch(function(err) {
             res.status(500);
-            res.send();
+            res.send(err);
         });
 };
 
@@ -26,7 +26,7 @@ module.exports.getNote = function(req, res) {
                 res.send();
             } else {
                 res.status(500);
-                res.send();
+                res.send(err);
             }
         });
 };
@@ -37,9 +37,9 @@ module.exports.postNote = function(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(note));
         })
-        .catch(function() {
+        .catch(function(err) {
             res.status(500);
-            res.send();
+            res.send(err);
         });
 };
 
@@ -49,9 +49,9 @@ module.exports.putNote = function(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(note));
         })
-        .catch(function() {
+        .catch(function(err) {
             res.status(500);
-            res.send();
+            res.send(err);
         });
 };
 
@@ -63,8 +63,8 @@ module.exports.deleteNote = function(req, res) {
                 _id: req.params.id
             });
         })
-        .catch(function() {
+        .catch(function(err) {
             res.status(500);
-            res.send();
+            res.send(err);
         });
 };
