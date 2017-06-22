@@ -1,5 +1,6 @@
 // Dependencies
 import observer from '../libs/observer';
+import socket from '../helpers/socket';
 import { Note } from './note';
 
 // NoteModel factory
@@ -9,28 +10,6 @@ const NoteModel = () => {
     };
     const ob = observer(); // generate private observer for model internal communication
     let fetched = false; // Set to true when initial fetching for the data is finished
-
-    // Private functions
-    const fetchNotes = () => {
-
-        // We just assume there would never be an error, errorhandling could of course be added
-        return new Promise(resolve => {
-            fetch('/notes')
-                .then(res => res.json())
-                .then(data => {
-                    const notes = data.notes.map(note => new Note(note));
-
-                    self.notes.push(...notes);
-
-                    // Set fetched to true, since the notes are fetched now
-                    fetched = true;
-
-                    ob.trigger('notes', self.notes, 'fetched');
-
-                    resolve();
-                });
-        });
-    };
 
     // Public functions
     self.addNote = data => {
@@ -49,13 +28,7 @@ const NoteModel = () => {
             };
 
             fetch('/notes', params)
-                .then(res => res.json())
-                .then(data => {
-                    self.notes.push(new Note(data));
-                    ob.trigger('notes', self.notes, 'added');
-
-                    resolve();
-                });
+                .then(resolve);
         });
     };
 
@@ -83,12 +56,7 @@ const NoteModel = () => {
             };
 
             fetch('/notes/' + note._id, params)
-                .then(res => res.json())
-                .then(() => {
-                    ob.trigger('notes', self.notes, 'updated');
-
-                    resolve();
-                });
+                .then(resolve);
         });
     };
 
@@ -105,14 +73,7 @@ const NoteModel = () => {
             };
 
             fetch('/notes/' + _id, params)
-                .then(res => res.json())
-                .then(data => {
-                    self.notes.splice(self.notes.findIndex(note => note._id === data._id), 1);
-
-                    ob.trigger('notes', self.notes, 'removed');
-
-                    resolve();
-                });
+                .then(resolve);
         });
     };
 
@@ -140,6 +101,47 @@ const NoteModel = () => {
             ob.on('notes', callback);
         }
     };
+
+    // Private functions
+    const fetchNotes = () => {
+
+        // We just assume there would never be an error, errorhandling could of course be added
+        return new Promise(resolve => {
+            fetch('/notes')
+                .then(res => res.json())
+                .then(data => {
+                    const notes = data.notes.map(note => new Note(note));
+
+                    self.notes.push(...notes);
+
+                    // Set fetched to true, since the notes are fetched now
+                    fetched = true;
+
+                    ob.trigger('notes', self.notes, 'fetched');
+
+                    resolve();
+                });
+        });
+    };
+
+    const noteAdded = note => {
+        self.notes.push(new Note(note));
+        ob.trigger('notes', self.notes, 'added');
+    };
+
+    const noteUpdated = note => {
+        self.notes[self.notes.findIndex(n => n._id === note._id)] = new Note(note);
+        ob.trigger('notes', self.notes, 'updated');
+    };
+
+    const noteDeleted = data => {
+        self.notes.splice(self.notes.findIndex(note => note._id === data._id), 1);
+        ob.trigger('notes', self.notes, 'removed');
+    };
+
+    socket.on('noteAdded', noteAdded);
+    socket.on('noteUpdated', noteUpdated);
+    socket.on('noteDeleted', noteDeleted);
 
     // Fetch notes from the server
     fetchNotes();

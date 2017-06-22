@@ -34,6 +34,7 @@ module.exports.getNote = function(req, res) {
 module.exports.postNote = function(req, res) {
     store.addNote(req.body)
         .then(function(note) {
+            req.io.emit('noteAdded', note);
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(note));
         })
@@ -46,6 +47,7 @@ module.exports.postNote = function(req, res) {
 module.exports.putNote = function(req, res) {
     store.updateNote(req.params.id, req.body)
         .then(function(note) {
+            req.io.emit('noteUpdated', note);
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(note));
         })
@@ -58,10 +60,13 @@ module.exports.putNote = function(req, res) {
 module.exports.deleteNote = function(req, res) {
     store.deleteNote(req.params.id)
         .then(function() {
-            res.setHeader('Content-Type', 'application/json');
-            res.send({
+            const data = {
                 _id: req.params.id
-            });
+            };
+
+            req.io.emit('noteDeleted', data);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(data);
         })
         .catch(function(err) {
             res.status(500);
