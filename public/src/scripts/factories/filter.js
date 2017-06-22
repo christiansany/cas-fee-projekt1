@@ -1,6 +1,11 @@
 import observer from '../libs/observer';
 
-// Filter Factory
+/**
+ * Filter Factory
+ *
+ * @param {Element} trigger as factory root element
+ * @return {Object} instance
+ */
 export const createFilter = trigger => {
     const instance = Object.assign({}, observer()); // Object composition
     const state = {

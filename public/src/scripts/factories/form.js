@@ -1,7 +1,12 @@
 import observer from '../libs/observer';
 import Pikaday from '../libs/pikaday';
 
-// Form Factory
+/**
+ * Form Factory
+ *
+ * @param {Element} container as factory root element
+ * @return {Object} instance
+ */
 export const createForm = container => {
     const instance = Object.assign({}, observer()); // Object composition
 

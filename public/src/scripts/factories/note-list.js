@@ -1,9 +1,14 @@
 import observer from '../libs/observer';
 
-// Compiled via handlebars-loader
+// Precompiled via handlebars-loader
 import noteTemplate from '../../templates/note.hbs';
 
-// NoteList Factory
+/**
+ * NoteList Factory
+ *
+ * @param {Element} container as factory root element
+ * @return {Object} instance
+ */
 export const createNoteList = container => {
     const instance = Object.assign({}, observer()); // Object composition
 

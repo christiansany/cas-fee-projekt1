@@ -11,10 +11,6 @@
         border-bottom: 1px solid var(--color-borders);
     }
 
-    &:hover {
-        // background-color: #f5f5f5;
-    }
-
     &__action {
         flex: 0 0 rem(30px);
     }
@@ -50,15 +46,6 @@
         margin: 0;
     }
 
-    //&__finishdate {
-    //    position: absolute;
-    //    bottom: -20px;
-    //    font-size: rem(12px);
-    //    font-weight: 300;
-    //    opacity: 0;
-    //    transition: opacity .22s ease-in-out;
-    //}
-
     &__edit-link,
     &__delete-link {
         position: relative;
@@ -91,13 +78,5 @@
                 background-color: var(--color-secondary);
             }
         }
-    }
-
-    &.is-finished {
-        //padding-bottom: rem(40px);
-        //
-        //.note__finishdate {
-        //    opacity: 1;
-        //}
     }
 }

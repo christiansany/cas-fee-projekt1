@@ -1,6 +1,11 @@
 import observer from '../libs/observer';
 
-// Theme Switcher Factory
+/**
+ * Theme Switcher Factory
+ *
+ * @param {Element} container as factory root element
+ * @return {Object} instance
+ */
 export const createThemeSwitcher = container => {
     const instance = Object.assign({}, observer()); // Object composition
     const themes = [];

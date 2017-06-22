@@ -26374,6 +26374,12 @@
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	/**
+	 * Router Factory
+	 *
+	 * @param {Element} container as factory root element
+	 * @return {Object} instance
+	 */
 	var createRouter = exports.createRouter = function createRouter(container) {
 	    var instance = Object.assign({});
 	
@@ -26383,9 +26389,6 @@
 	        views.forEach(function (view) {
 	            view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
 	        });
-	
-	        // Doesn't work with browserify
-	        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
 	    };
 	
 	    return instance;
@@ -26408,7 +26411,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// Theme Switcher Factory
+	/**
+	 * Theme Switcher Factory
+	 *
+	 * @param {Element} container as factory root element
+	 * @return {Object} instance
+	 */
 	var createThemeSwitcher = exports.createThemeSwitcher = function createThemeSwitcher(container) {
 	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
 	    var themes = [];
@@ -26482,13 +26490,23 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// Sorter Factory
+	/**
+	 * Sorter Factory
+	 *
+	 * @param {Element} container as factory root element
+	 * @return {Object} instance
+	 */
 	var createSorter = exports.createSorter = function createSorter(container) {
 	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
 	    var state = {
 	        sort: ''
 	    };
 	
+	    /**
+	     * Set active sort
+	     *
+	     * @param {String} sort to switch to
+	     */
 	    instance.setSort = function (sort) {
 	        state.sort = sort;
 	
@@ -26539,7 +26557,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// Filter Factory
+	/**
+	 * Filter Factory
+	 *
+	 * @param {Element} trigger as factory root element
+	 * @return {Object} instance
+	 */
 	var createFilter = exports.createFilter = function createFilter(trigger) {
 	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
 	    var state = {
@@ -26592,7 +26615,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// NoteList Factory
+	/**
+	 * NoteList Factory
+	 *
+	 * @param {Element} container as factory root element
+	 * @return {Object} instance
+	 */
 	var createNoteList = exports.createNoteList = function createNoteList(container) {
 	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
 	
@@ -26643,7 +26671,7 @@
 	    return instance;
 	};
 	
-	// Compiled via handlebars-loader
+	// Precompiled via handlebars-loader
 
 /***/ }),
 /* 202 */
@@ -26710,7 +26738,12 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	// Form Factory
+	/**
+	 * Form Factory
+	 *
+	 * @param {Element} container as factory root element
+	 * @return {Object} instance
+	 */
 	var createForm = exports.createForm = function createForm(container) {
 	    var instance = Object.assign({}, (0, _observer2.default)()); // Object composition
 	

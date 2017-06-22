@@ -1,3 +1,9 @@
+/**
+ * Router Factory
+ *
+ * @param {Element} container as factory root element
+ * @return {Object} instance
+ */
 export const createRouter = container => {
     const instance = Object.assign({});
 
@@ -7,9 +13,6 @@ export const createRouter = container => {
         views.forEach((view) => {
             view.classList.toggle('is-active', view.getAttribute('data-route') === viewName);
         });
-
-        // Doesn't work with browserify
-        // window.history.pushState({ 'pageTitle': document.title }, '', viewName);
     };
 
     return instance;

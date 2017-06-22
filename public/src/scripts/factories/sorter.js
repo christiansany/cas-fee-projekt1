@@ -1,13 +1,23 @@
 import observer from '../libs/observer';
 
-// Sorter Factory
+/**
+ * Sorter Factory
+ *
+ * @param {Element} container as factory root element
+ * @return {Object} instance
+ */
 export const createSorter = container => {
     const instance = Object.assign({}, observer()); // Object composition
     const state = {
         sort: ''
     };
 
-    instance.setSort = (sort) => {
+    /**
+     * Set active sort
+     *
+     * @param {String} sort to switch to
+     */
+    instance.setSort = sort => {
         state.sort = sort;
 
         triggers.forEach((trigger) => {
