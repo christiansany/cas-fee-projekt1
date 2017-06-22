@@ -6,13 +6,10 @@ import cleanCSS from 'gulp-clean-css';
 import webpack from 'gulp-webpack';
 import named from 'vinyl-named';
 import del from 'del';
-import browser from 'browser-sync';
-
-// TODO: Implement font copying when fonts are integrated
 
 const dirs = {
-    src: 'src',
-    dest: 'build'
+    src: 'public/src',
+    dest: 'public/build'
 };
 
 export const cleanStatic = () => {
@@ -34,10 +31,7 @@ export const buildStyles = () => {
         .pipe(autoprefixer())
         .pipe(cleanCSS())
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest(stylesPaths.dest))
-
-        // Reload browser
-        .pipe(browser.stream({once: true}));
+        .pipe(gulp.dest(stylesPaths.dest));
 };
 
 const scriptsPaths = {
@@ -52,10 +46,7 @@ export const buildScripts = () => {
     return gulp.src(scriptsPaths.src)
         .pipe(named())
         .pipe(webpack(require('./webpack.config.js')))
-        .pipe(gulp.dest(scriptsPaths.dest))
-
-        // Reload browser
-        .pipe(browser.stream({once: true}));
+        .pipe(gulp.dest(scriptsPaths.dest));
 };
 
 const fontsPaths = {
@@ -92,12 +83,6 @@ export const build = gulp.series(cleanStatic, gulp.parallel(
 
 // Watch task
 export const watch = gulp.series(() => {
-    browser.init({
-        server: {
-            baseDir: './'
-        }
-    });
-
     gulp.watch(stylesPaths.watch, gulp.parallel(buildStyles));
     gulp.watch(scriptsPaths.watch, gulp.parallel(buildScripts));
     gulp.watch(fontsPaths.watch, gulp.parallel(copyFonts));

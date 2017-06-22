@@ -37,8 +37,6 @@ export const createNoteList = container => {
     instance.renderNotes = (notes) => {
         (notes.length !== 0) ? showNotesContainer() : showNoResultsContainer();
 
-        console.log(notes);
-
         listContainer.innerHTML = '';
 
         notes.forEach(note => {

@@ -14,26 +14,39 @@ const NoteModel = () => {
     // Private functions
     const fetchNotes = () => {
 
-        // Fetch notes from localStorage
-        // This will later be replaced by the ajaxcall
-        const temp = JSON.parse(localStorage.getItem('notes'));
+        fetch('/notes')
+            .then(res => res.json())
+            .then(data => {
+                const notes = data.notes.map(note => new Note(note));
 
-        // Check if notes found in localStorage
-        if (temp !== null) {
+                self.notes.push(...notes);
 
-            const notes = temp.map(note => new Note(note));
+                ob.trigger('notes', self.notes, 'fetched');
 
-            self.notes.push(...notes);
+                // Set fetched to true, since the notes are fetched now
+                fetched = true;
+            });
 
-            // Set the internal uid to the highest found note
-            self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
-        }
-
-        // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-        ob.trigger('notes', self.notes, 'fetched');
-
-        // Set fetched to true, since the notes are fetched now
-        fetched = true;
+        // // Fetch notes from localStorage
+        // // This will later be replaced by the ajaxcall
+        // const temp = JSON.parse(localStorage.getItem('notes'));
+        //
+        // // Check if notes found in localStorage
+        // if (temp !== null) {
+        //
+        //     const notes = temp.map(note => new Note(note));
+        //
+        //     self.notes.push(...notes);
+        //
+        //     // Set the internal uid to the highest found note
+        //     self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
+        // }
+        //
+        // // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
+        // ob.trigger('notes', self.notes, 'fetched');
+        //
+        // // Set fetched to true, since the notes are fetched now
+        // fetched = true;
     };
 
     const save = () => {
@@ -51,21 +64,23 @@ const NoteModel = () => {
 
     // Public functions
     self.addNote = (data) => {
-        // Creature unique id for note and assign it to the note
-        uid++;
+        const note = new Note(data);
 
-        const note = new Note(Object.assign({}, data, {
-            uid: '' + uid
-        }));
+        const params = {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(Note.serialize(note))
+        };
 
-        // Push on notes
-        self.notes.push(note);
-
-        // Saves current notes to localStorage
-        save();
-
-        // Trigger stream subscribtions
-        ob.trigger('notes', self.notes, 'added');
+        fetch('/notes', params)
+            .then(res => res.json())
+            .then((data) => {
+                self.notes.push(new Note(data));
+                ob.trigger('notes', self.notes, 'added');
+            });
     };
 
     self.updateNote = (uid, data) => {

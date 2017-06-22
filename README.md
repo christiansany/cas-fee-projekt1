@@ -1,8 +1,8 @@
 # Noter
 
-Demo: [https://christiansany.github.io/cas-fee-projekt1/](https://christiansany.github.io/cas-fee-projekt1/)
+Demo (obsolete): [https://christiansany.github.io/cas-fee-projekt1/](https://christiansany.github.io/cas-fee-projekt1/)
 
-Noter is due to used ES6 features as well as CSS variables not cross-browser compatible. For the best experience user [Google Chrome Version 59](https://www.google.de/chrome/browser/desktop/index.html?brand=CHBD&gclid=EAIaIQobChMIxemG2ZLR1AIVBDPTCh1aYASTEAAYASAAEgK3M_D_BwE) or newer.
+Noter is due to used ES6 features as well as CSS variables not cross-browser compatible. For the best user experience, use [Google Chrome Version 59](https://www.google.de/chrome/browser/desktop/index.html?brand=CHBD&gclid=EAIaIQobChMIxemG2ZLR1AIVBDPTCh1aYASTEAAYASAAEgK3M_D_BwE) or newer.
 
 ## Environment
 

@@ -183,26 +183,26 @@ window.genNotes = function() {
         dueDate: '21.08.2017'
     });
 
-    Notes.addNote({
-        title: 'Explore the street art of East London 2',
-        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-        importance: 4,
-        dueDate: '26.08.2017'
-    });
-
-    Notes.addNote({
-        title: 'Explore the street art of East London 3',
-        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-        importance: 3,
-        dueDate: '20.08.2017'
-    });
-
-    Notes.addNote({
-        title: 'Explore the street art of East London 4',
-        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-        importance: 5,
-        dueDate: '25.08.2017'
-    });
+    // Notes.addNote({
+    //     title: 'Explore the street art of East London 2',
+    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+    //     importance: 4,
+    //     dueDate: '26.08.2017'
+    // });
+    //
+    // Notes.addNote({
+    //     title: 'Explore the street art of East London 3',
+    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+    //     importance: 3,
+    //     dueDate: '20.08.2017'
+    // });
+    //
+    // Notes.addNote({
+    //     title: 'Explore the street art of East London 4',
+    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+    //     importance: 5,
+    //     dueDate: '25.08.2017'
+    // });
 };
 
 // Notes

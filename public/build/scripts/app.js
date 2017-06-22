@@ -242,26 +242,26 @@
 	        dueDate: '21.08.2017'
 	    });
 	
-	    _noteModel2.default.addNote({
-	        title: 'Explore the street art of East London 2',
-	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-	        importance: 4,
-	        dueDate: '26.08.2017'
-	    });
-	
-	    _noteModel2.default.addNote({
-	        title: 'Explore the street art of East London 3',
-	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-	        importance: 3,
-	        dueDate: '20.08.2017'
-	    });
-	
-	    _noteModel2.default.addNote({
-	        title: 'Explore the street art of East London 4',
-	        description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
-	        importance: 5,
-	        dueDate: '25.08.2017'
-	    });
+	    // Notes.addNote({
+	    //     title: 'Explore the street art of East London 2',
+	    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+	    //     importance: 4,
+	    //     dueDate: '26.08.2017'
+	    // });
+	    //
+	    // Notes.addNote({
+	    //     title: 'Explore the street art of East London 3',
+	    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+	    //     importance: 3,
+	    //     dueDate: '20.08.2017'
+	    // });
+	    //
+	    // Notes.addNote({
+	    //     title: 'Explore the street art of East London 4',
+	    //     description: 'Climb leg rub face on everything give attitude nap all day for under the bed. Chase mice attack feet but rub face on everything hopped up on goofballs.',
+	    //     importance: 5,
+	    //     dueDate: '25.08.2017'
+	    // });
 	};
 	
 	// Notes
@@ -15973,7 +15973,7 @@
 	
 	var _logger2 = _interopRequireDefault(_logger);
 	
-	var VERSION = '4.0.8';
+	var VERSION = '4.0.10';
 	exports.VERSION = VERSION;
 	var COMPILER_REVISION = 7;
 	
@@ -17096,31 +17096,43 @@
 	    // Private functions
 	    var fetchNotes = function fetchNotes() {
 	
-	        // Fetch notes from localStorage
-	        // This will later be replaced by the ajaxcall
-	        var temp = JSON.parse(localStorage.getItem('notes'));
-	
-	        // Check if notes found in localStorage
-	        if (temp !== null) {
+	        fetch('/notes').then(function (res) {
+	            return res.json();
+	        }).then(function (data) {
 	            var _self$notes;
 	
-	            var _notes = temp.map(function (note) {
+	            var notes = data.notes.map(function (note) {
 	                return new _note.Note(note);
 	            });
 	
-	            (_self$notes = self.notes).push.apply(_self$notes, _toConsumableArray(_notes));
+	            (_self$notes = self.notes).push.apply(_self$notes, _toConsumableArray(notes));
 	
-	            // Set the internal uid to the highest found note
-	            self.notes.forEach(function (note) {
-	                return uid = uid < note.uid ? note.uid : uid;
-	            });
-	        }
+	            ob.trigger('notes', self.notes, 'fetched');
 	
-	        // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
-	        ob.trigger('notes', self.notes, 'fetched');
+	            // Set fetched to true, since the notes are fetched now
+	            fetched = true;
+	        });
 	
-	        // Set fetched to true, since the notes are fetched now
-	        fetched = true;
+	        // // Fetch notes from localStorage
+	        // // This will later be replaced by the ajaxcall
+	        // const temp = JSON.parse(localStorage.getItem('notes'));
+	        //
+	        // // Check if notes found in localStorage
+	        // if (temp !== null) {
+	        //
+	        //     const notes = temp.map(note => new Note(note));
+	        //
+	        //     self.notes.push(...notes);
+	        //
+	        //     // Set the internal uid to the highest found note
+	        //     self.notes.forEach(note => uid = (uid < note.uid) ? note.uid : uid);
+	        // }
+	        //
+	        // // TODO: When polling is activated, a comparison should be made between the temp and the notes array, trigger subscribers only, when actually something changed
+	        // ob.trigger('notes', self.notes, 'fetched');
+	        //
+	        // // Set fetched to true, since the notes are fetched now
+	        // fetched = true;
 	    };
 	
 	    var save = function save() {
@@ -17140,21 +17152,23 @@
 	
 	    // Public functions
 	    self.addNote = function (data) {
-	        // Creature unique id for note and assign it to the note
-	        uid++;
+	        var note = new _note.Note(data);
 	
-	        var note = new _note.Note(Object.assign({}, data, {
-	            uid: '' + uid
-	        }));
+	        var params = {
+	            method: 'POST',
+	            headers: {
+	                'Accept': 'application/json',
+	                'Content-Type': 'application/json'
+	            },
+	            body: JSON.stringify(_note.Note.serialize(note))
+	        };
 	
-	        // Push on notes
-	        self.notes.push(note);
-	
-	        // Saves current notes to localStorage
-	        save();
-	
-	        // Trigger stream subscribtions
-	        ob.trigger('notes', self.notes, 'added');
+	        fetch('/notes', params).then(function (res) {
+	            return res.json();
+	        }).then(function (data) {
+	            self.notes.push(new _note.Note(data));
+	            ob.trigger('notes', self.notes, 'added');
+	        });
 	    };
 	
 	    self.updateNote = function (uid, data) {
@@ -17724,8 +17738,6 @@
 	
 	    instance.renderNotes = function (notes) {
 	        notes.length !== 0 ? showNotesContainer() : showNoResultsContainer();
-	
-	        console.log(notes);
 	
 	        listContainer.innerHTML = '';
 	
